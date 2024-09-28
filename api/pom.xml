@@ -10,9 +10,9 @@
     </parent>
     <groupId>com.moloom.img</groupId>
     <artifactId>api</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.7.1</version>
     <name>api</name>
-    <description>api</description>
+    <description>mo's image hosting service</description>
     <url/>
     <licenses>
         <license/>
