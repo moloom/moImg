@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/i")
 public class Test {
-    @RequestMapping(value = "/test",method = RequestMethod.GET)
-    public String TestConnection(){
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public String TestConnection() {
 
-        return JSONArray.toJSONString("Welcome MOSS!");
+        return JSONArray.toJSONString("Welcome to moImg!");
     }
 }
