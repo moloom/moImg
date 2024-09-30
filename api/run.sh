@@ -8,11 +8,11 @@ HOST="moloom@moloom.com"
 
 mvn clean && mvn package
 
-scp -P 7777 target/MOSS-1.7.1.jar $HOST:~/moss/backend
+scp -P 7777 target/api-1.7.1.jar $HOST:~/moImg/backend
 
 ssh -p 7777 $HOST 'bash -s' << EOF
-cd ~/moss
-docker compose stop moss-backend
-docker compose cp -a backend/MOSS-1.7.1.jar moss-backend:/moss
-docker compose start moss-backend
+cd ~/moImg
+docker compose stop moImg-api
+docker compose cp -a backend/api-1.7.1.jar moImg-api:/moImg
+docker compose start moImg-api
 EOF
