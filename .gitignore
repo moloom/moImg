@@ -13,7 +13,7 @@ api/src/test/
 .springBeans
 .sts4-cache
 
-api/run.sh
+/**/run.sh
 
 ### IntelliJ IDEA ###
 .idea
