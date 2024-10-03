@@ -39,7 +39,7 @@ public class RedisConfig {
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashValueSerializer(jackson2JsonRedisSerializer);
         redisTemplate.afterPropertiesSet();
-jackson2JsonRedisSerializer.setObjectMapper();
+
         return redisTemplate;
     }
 
