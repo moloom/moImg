@@ -2,6 +2,10 @@ package com.moloom.img.api.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.moloom.img.api.config.RedisConfig;
+import io.minio.BucketExistsArgs;
+import io.minio.MakeBucketArgs;
+import io.minio.MinioClient;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,11 +24,14 @@ import java.time.format.DateTimeFormatter;
 @RequestMapping("/i")
 public class Test {
 
-    @Autowired
+    @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
+    @Resource
+    private MinioClient minioClient;
+
     @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public String TestConnection() {
+    public String TestConnection() throws Exception {
         // 获取当前时间
         LocalDateTime currentTime = LocalDateTime.now();
 
@@ -34,6 +41,13 @@ public class Test {
         // 格式化当前时间为字符串
         String formattedTime = currentTime.format(formatter);
 
+
+        //测试minio连接
+        boolean bucketExists = minioClient.bucketExists(BucketExistsArgs.builder().bucket("qwertyuiop").build());
+        if (!bucketExists) {
+            minioClient.makeBucket(MakeBucketArgs.builder().bucket("qwertyuiop").build());
+        } else
+            System.out.println("bucket qwertyuiop is exists");
         redisTemplate.opsForValue().set("currentTime", formattedTime);
         return JSONArray.toJSONString("Welcome to moImg!");
     }
