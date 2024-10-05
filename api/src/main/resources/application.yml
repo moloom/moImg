@@ -21,6 +21,11 @@ spring:
           max-idle: 8         #连接池最大空闲数
           min-idle: 0         #连接词最小空闲连接数
           max-wait: -1ms      #连接池最大阻塞等待实践，负值表示没有限制
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 1GB
 
 #  mvc:
 #    static-path-pattern: /static/**
@@ -30,3 +35,17 @@ spring:
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
+
+
+
+# moImg args
+moimg:
+  upload:
+    upload-root-path: "/api/files"
+
+minio:
+  host: "http://moimg-minio:9000"
+  access-key: "moloom"
+  secret-key: "mmmmmmmm"
+
+
