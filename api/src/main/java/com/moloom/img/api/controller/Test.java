@@ -8,6 +8,7 @@ import io.minio.MinioClient;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +22,7 @@ import java.time.format.DateTimeFormatter;
  * @description:
  */
 @RestController
-@RequestMapping("/i")
+//@RequestMapping("/i")
 public class Test {
 
     @Resource
@@ -30,7 +31,7 @@ public class Test {
     @Resource
     private MinioClient minioClient;
 
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    @RequestMapping(value = "/i/test", method = RequestMethod.GET)
     public String TestConnection() throws Exception {
         // 获取当前时间
         LocalDateTime currentTime = LocalDateTime.now();
@@ -50,5 +51,12 @@ public class Test {
             System.out.println("bucket qwertyuiop is exists");
         redisTemplate.opsForValue().set("currentTime", formattedTime);
         return JSONArray.toJSONString("Welcome to moImg!");
+    }
+
+    @GetMapping("/login")
+    public String login(String username, String password) {
+        if ("moloom".equals(username) && "pass".equals(password))
+            return com.alibaba.fastjson2.JSONArray.toJSONString("true");
+        else return com.alibaba.fastjson2.JSONArray.toJSONString("false");
     }
 }
