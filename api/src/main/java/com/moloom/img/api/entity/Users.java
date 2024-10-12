@@ -17,7 +17,7 @@ public class Users {
     private String email;
     private Boolean emailActive;
     private String token;
-    private Byte alive;
+    private Byte status;
     private Timestamp latestLoggedTime;
     private Timestamp createdTime;
     private Timestamp updatedTime;
