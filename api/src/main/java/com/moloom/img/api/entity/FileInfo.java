@@ -12,18 +12,17 @@ import java.sql.Timestamp;
  */
 @Data
 public class FileInfo {
-    @NonNull
-    private long id;
+    private Long id;
     private String fileName;
     private String filePath;
-    private long fileSize;
+    private Long fileSize;
     private String fileType;
-    private long imgWidth;
-    private long imgHeight;
-    private long access_count;
-    private long access_user;
-    private long created_by;
-    private Timestamp created_time;
-    private Timestamp updated_time;
-    private Timestamp latest_view_time;
+    private Long imgWidth;
+    private Long imgHeight;
+    private Long accessCount;
+    private Long accessUser;
+    private Long createdBy;
+    private Timestamp createdTime;
+    private Timestamp updatedTime;
+    private Timestamp latestViewTime;
 }
