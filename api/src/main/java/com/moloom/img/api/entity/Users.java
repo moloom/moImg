@@ -15,9 +15,10 @@ public class Users {
     private String name;
     private String password;
     private String email;
+    private Boolean emailActive;
     private String token;
     private Byte alive;
+    private Timestamp latestLoggedTime;
     private Timestamp createdTime;
     private Timestamp updatedTime;
-    private Timestamp latestLoggedTime;
 }
