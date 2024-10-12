@@ -17,10 +17,10 @@ import org.springframework.security.web.SecurityFilterChain;
 /**
  * @author: moloom
  * @date: 2024-10-12 00:16
- * @description: config of security 注释调用，暂时不用
+ * @description: config of security
  */
-//@Configuration
-//@EnableWebSecurity
+@Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     /**
@@ -44,9 +44,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeRequests(auth -> {
-                    auth.requestMatchers("/i/test", "/upload/").permitAll();
+                    auth.anyRequest().permitAll();
+//                    auth.requestMatchers("/i/test", "/upload/").permitAll();
                     //把剩下的请求都拦截，需要登录
-                    auth.anyRequest().authenticated();
+//                    auth.anyRequest().authenticated();
                 })
                 .formLogin(conf -> {
                     conf.loginPage("/login"); // 自定义登录页面
