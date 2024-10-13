@@ -14,13 +14,14 @@ import java.sql.Timestamp;
 public class FileInfo {
     private Long id;
     private String fileName;
-    private String filePath;
+    private String fileUrl;
     private Long fileSize;
     private String fileType;
+    private String token;
     private Long imgWidth;
     private Long imgHeight;
-    private Long accessCount;
-    private Long accessUser;
+    private Long viewCount;
+    private Long viewUser;
     private Long createdBy;
     private Timestamp createdTime;
     private Timestamp updatedTime;
