@@ -117,6 +117,22 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <!--                <version>3.11.0</version> &lt;!&ndash; 最新版本 &ndash;&gt;-->
+                <configuration>
+                    <source>22</source>
+                    <target>22</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <!--                <version>3.6.1</version> &lt;!&ndash; 或更高版本 &ndash;&gt;-->
+                <version>3.8.0</version>
+            </plugin>
         </plugins>
     </build>
 
