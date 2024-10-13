@@ -29,8 +29,8 @@ public interface UsersDao {
      * @date 2024-10-13 00:14:52
      * @description 通过token查询用户
      */
-    @Select("select * from where token=${token}")
-    public Users searchUserByToken(String token);
+    /*@Select("select * from where token=${token}")
+    public Users searchUserByToken(String token);*/
 
     /**
      * @param user
