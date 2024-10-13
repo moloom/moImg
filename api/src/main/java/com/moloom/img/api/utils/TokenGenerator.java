@@ -7,16 +7,20 @@ package com.moloom.img.api.utils;
  */
 public class TokenGenerator {
 
+    // 基础字符
     private static final String CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    // token的长度
     private static final int TOKEN_LENGTH = 32;
-    private static final int MAX_ATTEMPTS = 10; // 最大尝试次数
-    private static final int MAX_RETRIES = 3;  // 最大重试次数
+    // 字符集的长度
+    private static final int CHARACTERS_LENGTH = CHARACTERS.length();
 
-    private static String getToken() {
+    public static String getToken() {
+        //StringBuilder 比 StringBuffer 几乎快一倍
         StringBuilder token = new StringBuilder();
 
-        for (int i = 0; i < TOKEN_LENGTH; i++) {
-            int randomIndex = (int) (Math.random() * CHARACTERS.length());
+        //字符串拼接token
+        for (int i = 0; i < TOKEN_LENGTH; ++i) {
+            int randomIndex = (int) (Math.random() * CHARACTERS_LENGTH);
             token.append(CHARACTERS.charAt(randomIndex));
         }
 
