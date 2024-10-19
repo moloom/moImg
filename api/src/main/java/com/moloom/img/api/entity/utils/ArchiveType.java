@@ -13,14 +13,14 @@ public enum ArchiveType {
     ZIP("application/zip", Arrays.asList("zip"), "Compressed Archive File"),
     RAR("application/x-rar-compressed", Arrays.asList("rar"), "RAR archive"),
     SEVEN_Z("application/x-7z-compressed", Arrays.asList("7z"), "7-zip archive"),
-    BZIP("application/x-bzip", Arrays.asList("bz", "tbz"), "Bzip UNIX Compressed File"),
-    BZIP2("application/x-bzip2", Arrays.asList("bz2", "tbz2", "boz", "tar.bz2"), "Bzip 2 UNIX Compressed File"),
     GZIP("application/gzip", Arrays.asList(".gz", ".tgz", "tar.gz"), "Gzip Compressed Archive"),
     TAR("application/x-tar", Arrays.asList("tar"), "GUN tar File Archive without compression (GUN Tape Archive)"),
     TAR_GZ("application/x-gtar", Arrays.asList("gtar"), "GNU tar Compressed File Archive (GNU Tape Archive)"),
     XZ("application/x-xz", Arrays.asList("xz", "tar.xz"), "A lossless data compression file format based on the LZMA algorithm"),
     LZIP("application/x-lzip", Arrays.asList("lz"), "Lzip (LZMA) compressed archive"),
-    LZMA("application/x-lzma", Arrays.asList("lzma"), "LZMA compressed archive");
+    LZMA("application/x-lzma", Arrays.asList("lzma"), "LZMA compressed archive"),
+    BZIP("application/x-bzip", Arrays.asList("bz", "tbz"), "Bzip UNIX Compressed File"),
+    BZIP2("application/x-bzip2", Arrays.asList("bz2", "tbz2", "boz", "tar.bz2"), "Bzip 2 UNIX Compressed File");
 
     private final String mimeType;
     private final List<String> extensions;
