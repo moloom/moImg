@@ -1,7 +1,6 @@
 package com.moloom.img.api.entity;
 
 import lombok.Data;
-import lombok.NonNull;
 
 import java.sql.Timestamp;
 
@@ -11,13 +10,12 @@ import java.sql.Timestamp;
  * @description: file info pojo
  */
 @Data
-public class FileInfo {
-    private Long id;
+public class ImgInfo {
+    private Long imgId;
     private String fileName;
     private String fileUrl;
     private Long fileSize;
-    private String fileType;
-    private String token;
+    private String fileExtension;
     private Long imgWidth;
     private Long imgHeight;
     private Long viewCount;
