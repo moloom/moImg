@@ -11,8 +11,8 @@ import java.sql.Timestamp;
  */
 @Data
 public class Users {
-    private Long id;
-    private String name;
+    private Long userId;
+    private String username;
     private String password;
     private String email;
     private Boolean emailActive;
