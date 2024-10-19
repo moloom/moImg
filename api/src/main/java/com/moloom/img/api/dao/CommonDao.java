@@ -6,9 +6,9 @@ import org.springframework.stereotype.Repository;
 /**
  * @author: moloom
  * @date: 2024-10-12 23:56
- * @description:
+ * @description: 公共的 Dao
  */
 @Mapper
 @Repository
-public interface FileDao {
+public interface CommonDao {
 }
