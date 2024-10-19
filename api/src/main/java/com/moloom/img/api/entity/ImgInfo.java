@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 /**
  * @author: moloom
  * @date: 2024-10-08 02:02
- * @description: file info pojo
+ * @description: img info pojo
  */
 @Data
 public class ImgInfo {
