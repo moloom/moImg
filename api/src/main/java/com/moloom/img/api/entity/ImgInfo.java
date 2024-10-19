@@ -18,6 +18,10 @@ public class ImgInfo {
     private String fileExtension;
     private Long imgWidth;
     private Long imgHeight;
+    private String camera_info;
+    private Float latitude;
+    private Float longitude;
+    private Float altitude;
     private Long viewCount;
     private Long viewUser;
     private Long createdBy;
