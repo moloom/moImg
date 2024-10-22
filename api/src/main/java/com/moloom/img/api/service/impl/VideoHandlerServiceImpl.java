@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class VideoHandlerServiceImpl implements VideoHandlerService {
     @Override
     public R videoHandler(FileUploadVo fileUploadVo) {
+//        视频格式要转换成 hevc
         return null;
     }
 }
