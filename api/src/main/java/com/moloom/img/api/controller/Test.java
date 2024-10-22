@@ -1,15 +1,10 @@
 package com.moloom.img.api.controller;
 
-import com.alibaba.fastjson.JSONArray;
-import com.moloom.img.api.config.RedisConfig;
-import com.moloom.img.api.entity.Token;
-import com.moloom.img.api.entity.dto.R;
-import com.moloom.img.api.utils.StringGenerator;
+import com.moloom.img.api.to.R;
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import jakarta.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,7 +54,7 @@ public class Test {
     @GetMapping("/login")
     public String login(String username, String password) {
         if ("moloom".equals(username) && "pass".equals(password))
-            return com.alibaba.fastjson2.JSONArray.toJSONString("true");
-        else return com.alibaba.fastjson2.JSONArray.toJSONString("false");
+            return "true";
+        else return "false";
     }
 }
