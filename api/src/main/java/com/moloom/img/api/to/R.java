@@ -1,4 +1,4 @@
-package com.moloom.img.api.entity.dto;
+package com.moloom.img.api.to;
 
 import java.util.HashMap;
 
