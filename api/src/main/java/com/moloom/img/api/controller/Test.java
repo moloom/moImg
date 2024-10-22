@@ -2,6 +2,9 @@ package com.moloom.img.api.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.moloom.img.api.config.RedisConfig;
+import com.moloom.img.api.entity.Token;
+import com.moloom.img.api.entity.dto.R;
+import com.moloom.img.api.utils.StringGenerator;
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
@@ -32,7 +35,7 @@ public class Test {
     private MinioClient minioClient;
 
     @RequestMapping(value = "/i/test", method = RequestMethod.GET)
-    public String TestConnection() throws Exception {
+    public R TestConnection() throws Exception {
         // 获取当前时间
         LocalDateTime currentTime = LocalDateTime.now();
 
@@ -50,7 +53,7 @@ public class Test {
         } else
             System.out.println("bucket qwertyuiop is exists");
         redisTemplate.opsForValue().set("currentTime", formattedTime);
-        return JSONArray.toJSONString("Welcome to moImg!");
+        return R.success("test is success!!");
     }
 
     @GetMapping("/login")
