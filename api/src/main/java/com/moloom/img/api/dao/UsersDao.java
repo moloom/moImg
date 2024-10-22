@@ -57,6 +57,6 @@ public interface UsersDao {
      * @date 2024-10-13 00:17:57
      * @description 删除一个用户
      */
-    public int deleteUser(Long id);
+//    public int deleteUser(Long id);
 
 }
