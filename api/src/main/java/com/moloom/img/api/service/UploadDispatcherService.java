@@ -17,13 +17,6 @@ public interface UploadDispatcherService {
      * @date 2024-10-20 04:21:21
      * @description 处理上传请求，把img、video和压缩包三种类型的请求转到对应的处理方法
      */
-    public R uploadDispatcher(FileUploadVo fileUploadVo);
+    public R uploadDispatcher(FileUploadVo fileUploadVo) throws Exception;
 
-    //处理压缩包，解压缩
-
-    //处理图片
-
-    //处理视频，视频格式要转换成 hevc
-
-    //处理普通文件
 }
