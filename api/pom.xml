@@ -48,11 +48,12 @@
         <!-- moloom -->
 
         <!--阿里Json类依赖-->
-        <dependency>
+        <!--<dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>2.0.32</version>
-        </dependency>
+        </dependency>-->
+
         <!-- redis -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
