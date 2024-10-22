@@ -39,7 +39,7 @@ public class UploadDispatcherServiceImpl implements UploadDispatcherService {
 
 
     @Override
-    public R uploadDispatcher(FileUploadVo fileUploadVo) {
+    public R uploadDispatcher(FileUploadVo fileUploadVo) throws Exception {
         /**
          * 查看这请求有没有问题
          * 1.获取文件类型
@@ -48,27 +48,27 @@ public class UploadDispatcherServiceImpl implements UploadDispatcherService {
          * 4.视频的话，需要判断是否是mp4,若不是默认转为mp4，不想转换的话，需要在上传时加一个参数
          */
 
-
+        Tika tika = new Tika();
         //前端已经实现了获取文件类型；如果是前端页面请求：就不需要再获取一次文件类型；api请求才需要获取类型
-        if (fileUploadVo.getFileExtension().isBlank())
+        if (fileUploadVo.getFileExtension() == null || fileUploadVo.getFileExtension().isEmpty())
             try (InputStream inputStream = fileUploadVo.getMultipartFile().getInputStream()) {
-                Tika tika = new Tika();
                 String extension = tika.detect(inputStream);
                 if (extension != null)
                     fileUploadVo.setFileExtension(extension);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+
+        log.debug("uploadDispatcher::文件类型:\t" + fileUploadVo.getFileExtension());
+
+        //匹配文件类型对应的处理方法
         if (fileUploadVo.getFileExtension().startsWith("image/"))
             return imgHandlerService.imghandler(fileUploadVo);
         else if (fileUploadVo.getFileExtension().startsWith("video/"))
             return videoHandlerService.videoHandler(fileUploadVo);
         else if (fileUploadVo.getFileExtension().startsWith("application/")) {
-            archiveHandlerService.archiveHandler(fileUploadVo);
+            return archiveHandlerService.archiveHandler(fileUploadVo);
         } else throw new ExtensionMismatchException();
-
-
-        return null;
     }
 
 }
