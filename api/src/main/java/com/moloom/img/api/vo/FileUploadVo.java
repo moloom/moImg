@@ -14,5 +14,5 @@ public class FileUploadVo {
     private String fileExtension; //如果是在页面上传文件，页面会获取后缀，若是api则需自己获取
     private MultipartFile multipartFile;
     private String token;
-    private ImgActionsVo imgActionsVo;
+    private ImgActionsVo actionsVo;
 }
