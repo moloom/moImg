@@ -4,6 +4,8 @@ import com.moloom.img.api.entity.ImgInfo;
 import com.moloom.img.api.to.R;
 import com.moloom.img.api.vo.FileUploadVo;
 
+import java.io.IOException;
+
 /**
  * @author: moloom
  * @date: 2024-10-22 18:26
@@ -19,7 +21,7 @@ public interface ImgHandlerService {
      * @date 2024-10-22 20:19:06
      * @description 处理图片
      */
-    public R imghandler(FileUploadVo fileUploadVo);
+    public R imghandler(FileUploadVo fileUploadVo) throws Exception;
 
     /**
      * @param img
