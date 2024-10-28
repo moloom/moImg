@@ -37,7 +37,7 @@ public class UploadController {
     @RequestMapping(value = "/upload/{token}", method = RequestMethod.POST, consumes = "multipart/form-data")
     public R upload(FileUploadVo fileUploadVo, @RequestParam("file") MultipartFile multipartFile,
                     @PathVariable("token") String token,
-                    HttpServletRequest request) throws Exception {
+                    HttpServletRequest request) {
         //打印所有的参数
         log.info("request.getRemoteHost() = " + request.getRemoteHost());
         log.info("X-Forwarded-For:" + request.getHeader("X-Forwarded-For"));
