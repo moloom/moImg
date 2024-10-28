@@ -39,7 +39,7 @@ public class UploadDispatcherServiceImpl implements UploadDispatcherService {
 
 
     @Override
-    public R uploadDispatcher(FileUploadVo fileUploadVo) throws Exception {
+    public R uploadDispatcher(FileUploadVo fileUploadVo){
         /**
          * 查看这请求有没有问题
          * 1.获取文件类型
