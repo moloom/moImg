@@ -38,9 +38,19 @@ moimg:
   upload:
     upload-root-path: "/api/files"
 
+
 minio:
   host: "http://moimg-minio:9000"
   access-key: "az5UMt1YqCueE8StuUtQ"
   secret-key: "AMip5jaSAeHKhwlmjcpS8NKfTTNfdCHl9x8EpLeb"
+  buckets: #桶名称，第一个是存图片的，第二个是存视频的
+    - bucket-name: "images"
+      bucket-tags:
+        type: "image"
+        author: "moloom"
+    - bucket-name: "videos"
+      bucket-tags:
+        type: "video"
+        author: "moloom"
 
 
