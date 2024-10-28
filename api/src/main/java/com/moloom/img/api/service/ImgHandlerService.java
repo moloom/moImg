@@ -21,7 +21,7 @@ public interface ImgHandlerService {
      * @date 2024-10-22 20:19:06
      * @description 处理图片
      */
-    public R imghandler(FileUploadVo fileUploadVo) throws Exception;
+    public R imghandler(FileUploadVo fileUploadVo);
 
     /**
      * @param img
