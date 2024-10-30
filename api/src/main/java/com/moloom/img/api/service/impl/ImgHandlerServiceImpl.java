@@ -3,6 +3,7 @@ package com.moloom.img.api.service.impl;
 import com.moloom.img.api.config.BucketConfig;
 import com.moloom.img.api.entity.ImgInfo;
 import com.moloom.img.api.service.ImgHandlerService;
+import com.moloom.img.api.to.Buckets;
 import com.moloom.img.api.to.R;
 import com.moloom.img.api.vo.FileUploadVo;
 import io.minio.*;
@@ -15,6 +16,7 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.TikaMimeKeys;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.xml.sax.helpers.DefaultHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -39,7 +41,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
     private RedisTemplate<String, Object> redisTemplate;
 
     @Resource
-    private MinioClient minioClient;
+    private MinioServiceImpl minioService;
 
     @Value("${moimg.upload.upload-root-path}")
     private String prePath;
@@ -48,16 +50,17 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
     private BucketConfig bucketConfig;
 
     //存储图片的bucket名称
-    private String imgBucketName;
+    private Buckets imgBucket;
+
 
     @PostConstruct
     public void initImgBucketName() {
         if (bucketConfig == null || bucketConfig.getBuckets() == null || bucketConfig.getBuckets().size() == 0) {
-            log.error("bucketConfig::Arg bucketConfig injects error");
+            log.error("class BucketConfig::Arg bucketConfig injects error");
             throw new IllegalStateException("bucketConfig is null or empty");
         }
         //获取存储图片的bucket 名称，规定了，第一个是存图片的
-        imgBucketName = bucketConfig.getBuckets().get(0).getBucketName();
+        imgBucket = bucketConfig.getBuckets().get(0);
     }
 
     @Override
@@ -81,34 +84,19 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         } catch (Exception e) {
             // 处理异常
         }*/
-        try {
-            boolean bucketExists = minioClient.bucketExists(BucketExistsArgs.builder().bucket(imgBucketName).build());
-            if (!bucketExists) {
-                minioClient.makeBucket(MakeBucketArgs.builder().bucket(imgBucketName).build());
-            } else log.info("bucket " + imgBucketName + " is exists");
-            ObjectWriteResponse flag = minioClient.putObject(PutObjectArgs.builder().bucket(imgBucketName).stream(fileUploadVo.getMultipartFile().getInputStream(), fileUploadVo.getMultipartFile().getSize(), -1).object(fileUploadVo.getMultipartFile().getName() + ".jpg").build());
-            System.out.println(flag.etag() + "\n" + flag.bucket() + "\n" + flag.versionId());
-            return R.success(flag);
-        } catch (IOException e) {
-            log.debug("storage error");
-            throw new RuntimeException(e);
-        } catch (ServerException e) {
-            throw new RuntimeException(e);
-        } catch (InsufficientDataException e) {
-            throw new RuntimeException(e);
-        } catch (ErrorResponseException e) {
-            throw new RuntimeException(e);
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (InvalidKeyException e) {
-            throw new RuntimeException(e);
-        } catch (InvalidResponseException e) {
-            throw new RuntimeException(e);
-        } catch (XmlParserException e) {
-            throw new RuntimeException(e);
-        } catch (InternalException e) {
-            throw new RuntimeException(e);
-        }
+        //确保bucket存在
+        boolean bucketExists = minioService.checkBucketExist(imgBucket.getBucketName());
+        if (!bucketExists)
+            minioService.makeBucket(imgBucket);
+        //处理：img存储在minIO的文件名及路径，存储于数据库的虚拟文件名，
+
+        //存储img到minIO，异步处理(X)
+        ObjectWriteResponse response = minioService.putObject(fileUploadVo);
+        log.info(response.toString());
+        //获取img元数据，保存到数据库，异步处理(X)
+
+
+        return R.success(response);
 
 
     }
