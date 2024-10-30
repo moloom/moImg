@@ -32,7 +32,6 @@ public class InitActions implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        log.info("\n\n" + String.valueOf(System.currentTimeMillis()));
         log.info("This is InitActions implements InitializingBean");
         //在应用启动时，检查minio的几个bucket是否存在
         checkMinioBucketExist();
@@ -49,7 +48,6 @@ public class InitActions implements InitializingBean {
     public void checkMinioBucketExist() {
         try {
             minioService.makeBucketsIfNotExist(bucketConfig.getBuckets());
-
 //            throw new ExtensionMismatchException("hello");
         } catch (Exception e) {
             log.error("initial check minIO bucket error.please check minio status is running.");
