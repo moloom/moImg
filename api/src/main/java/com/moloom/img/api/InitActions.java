@@ -49,7 +49,7 @@ public class InitActions implements InitializingBean {
         try {
             boolean b = minioService.makeBucketsIfNotExist(bucketConfig.getBuckets());
             if (!b)
-                throw new RuntimeException("checked minIO buckets are not exist,please ensure minIO is running and buckets are exist!");
+                throw new RuntimeException("minIO buckets are not exist,please ensure minIO is running and buckets are exist!");
             log.info("minIO buckets are exist");
         } catch (Exception e) {
             log.error("initial check minIO bucket error.please check minio status is running.");
