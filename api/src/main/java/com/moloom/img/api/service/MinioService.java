@@ -23,7 +23,7 @@ public interface MinioService {
      * @date 2024-10-28 19:38:06
      * @description 检查minio的bucket是否存在
      */
-    public boolean checkBucketExist(String bucketName) throws Exception;
+    public boolean checkBucketExist(String bucketName);
 
     /**
      * @param buckets 创建的bucket信息
@@ -32,7 +32,7 @@ public interface MinioService {
      * @date 2024-10-28 21:43:48
      * @description 创建 bucket
      */
-    public boolean makeBucket(Buckets buckets) throws Exception;
+    public boolean makeBucket(Buckets buckets);
 
     /**
      * @param buckets
@@ -41,5 +41,5 @@ public interface MinioService {
      * @date 2024-10-28 21:49:14
      * @description 若bucket不存在，则创建bucket
      */
-    public boolean makeBucketsIfNotExist(ArrayList<Buckets> buckets) throws Exception;
+    public boolean makeBucketsIfNotExist(ArrayList<Buckets> buckets);
 }
