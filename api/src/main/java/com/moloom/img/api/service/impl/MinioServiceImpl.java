@@ -2,14 +2,13 @@ package com.moloom.img.api.service.impl;
 
 import com.moloom.img.api.service.MinioService;
 import com.moloom.img.api.to.Buckets;
-import io.minio.BucketExistsArgs;
-import io.minio.MakeBucketArgs;
-import io.minio.MinioClient;
-import io.minio.SetBucketTagsArgs;
+import com.moloom.img.api.vo.FileUploadVo;
+import io.minio.*;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
@@ -27,7 +26,10 @@ public class MinioServiceImpl implements MinioService {
     @Override
     public boolean checkBucketExist(String bucketName) {
         try {
-            boolean bucketExists = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+            boolean bucketExists = minioClient.bucketExists(
+                    BucketExistsArgs.builder()
+                            .bucket(bucketName)
+                            .build());
             if (bucketExists)
                 log.info("checkBucketExist()::minIO bucket {} is exist", bucketName);
             else
@@ -35,8 +37,7 @@ public class MinioServiceImpl implements MinioService {
             return bucketExists;
         } catch (Exception e) {
             log.error("checkBucketExist()::check minIO bucket error.please check minio status is running.");
-            e.printStackTrace();
-            return false;
+            throw new RuntimeException();
         }
     }
 
@@ -56,10 +57,9 @@ public class MinioServiceImpl implements MinioService {
                 minioClient.setBucketTags(SetBucketTagsArgs.builder().bucket(bucket.getBucketName()).tags(bucket.getBucketTags()).build());
             return true;
         } catch (Exception e) {
-            log.debug("makeBucket()::make bucket error");
-            e.printStackTrace();
+            log.error("makeBucket()::make bucket error");
+            throw new RuntimeException();
         }
-        return false;
     }
 
     @Override
@@ -73,5 +73,27 @@ public class MinioServiceImpl implements MinioService {
             }
         }
         return true;
+    }
+
+    @Override
+    public ObjectWriteResponse putObject(FileUploadVo fileUploadVo) {
+        try {
+            ObjectWriteResponse response = minioClient.putObject(
+                    PutObjectArgs
+                            .builder()
+                            .bucket(fileUploadVo.getBucketName())
+                            .stream(fileUploadVo.getMultipartFile().getInputStream(), fileUploadVo.getMultipartFile().getSize(), -1)
+                            .object(fileUploadVo.getMultipartFile().getName() + ".jpg")
+                            .build());
+            return response;
+        } catch (Exception e) {
+            log.error("putObject()::put object to minIO error");
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public InputStream getObject(FileUploadVo fileUploadVo) {
+        return null;
     }
 }

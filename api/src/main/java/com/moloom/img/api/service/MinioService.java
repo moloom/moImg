@@ -2,9 +2,12 @@ package com.moloom.img.api.service;
 
 
 import com.moloom.img.api.to.Buckets;
+import com.moloom.img.api.vo.FileUploadVo;
+import io.minio.ObjectWriteResponse;
 import io.minio.errors.*;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -42,4 +45,22 @@ public interface MinioService {
      * @description 若bucket不存在，则创建bucket
      */
     public boolean makeBucketsIfNotExist(ArrayList<Buckets> buckets);
+
+    /**
+     * @param fileUploadVo 存储的img和img信息
+     * @return
+     * @author moloom
+     * @date 2024-10-31 01:30:22
+     * @description Uploads given stream as object in bucket.
+     */
+    public ObjectWriteResponse putObject(FileUploadVo fileUploadVo);
+
+    /**
+     * @param fileUploadVo
+     * @return return InputStream,and must be closed after use to release network resources.
+     * @author moloom
+     * @date 2024-10-31 01:35:09
+     * @description Gets data of an object.
+     */
+    public InputStream getObject(FileUploadVo fileUploadVo);
 }
