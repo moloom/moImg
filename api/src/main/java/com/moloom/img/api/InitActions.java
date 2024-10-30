@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -25,6 +27,9 @@ public class InitActions implements InitializingBean {
 
     @Resource
     private MinioService minioService;
+
+    @Resource
+    private ApplicationContext applicationContext;
 
     //获取bucket
     @Resource
@@ -47,13 +52,15 @@ public class InitActions implements InitializingBean {
      */
     public void checkMinioBucketExist() {
         try {
-            minioService.makeBucketsIfNotExist(bucketConfig.getBuckets());
-//            throw new ExtensionMismatchException("hello");
+            boolean b = minioService.makeBucketsIfNotExist(bucketConfig.getBuckets());
+            if (!b)
+                throw new RuntimeException("checked minIO buckets are not exist,please ensure minIO is running and buckets are exist!");
+            log.info("minIO buckets are exist");
         } catch (Exception e) {
             log.error("initial check minIO bucket error.please check minio status is running.");
             e.printStackTrace();
             //启动时检查minio bucket出错直接关闭app
-            System.exit(1);
+            ((ConfigurableApplicationContext) applicationContext).close();
         }
 
     }
