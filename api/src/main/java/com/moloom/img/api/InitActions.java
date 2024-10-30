@@ -35,7 +35,8 @@ public class InitActions implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         log.info("This is InitActions implements InitializingBean");
         //在应用启动时，检查minio的几个bucket是否存在
-        checkMinioBucketExist();
+        //开发阶段不开启
+//        checkMinioBucketExist();
 
     }
 
