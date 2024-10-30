@@ -34,7 +34,7 @@ public class MinioServiceImpl implements MinioService {
             return false;
         try {
             //先判断是否存在同名bucket,不存在再创建
-            boolean bucketExists = checkBucketExist(bucket.getBucketName());
+            boolean bucketExists = this.checkBucketExist(bucket.getBucketName());
             if (!bucketExists) {
                 minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucket.getBucketName()).build());
             }
@@ -54,7 +54,7 @@ public class MinioServiceImpl implements MinioService {
         if (buckets == null || buckets.size() == 0)
             return false;
         for (int i = 0; i < buckets.size(); i++) {
-            if (!makeBucket(buckets.get(i))) {
+            if (!this.makeBucket(buckets.get(i))) {
                 log.debug("makeBucketsIfNotExist()::make bucket error");
                 return false;
             }
