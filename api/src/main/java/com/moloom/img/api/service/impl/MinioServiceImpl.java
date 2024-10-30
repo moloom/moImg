@@ -2,7 +2,10 @@ package com.moloom.img.api.service.impl;
 
 import com.moloom.img.api.service.MinioService;
 import com.moloom.img.api.to.Buckets;
-import io.minio.*;
+import io.minio.BucketExistsArgs;
+import io.minio.MakeBucketArgs;
+import io.minio.MinioClient;
+import io.minio.SetBucketTagsArgs;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,9 +25,19 @@ public class MinioServiceImpl implements MinioService {
     private MinioClient minioClient;
 
     @Override
-    public boolean checkBucketExist(String bucketName) throws Exception {
-        log.debug("checkBucketExist()::bucket {} is exists", bucketName);
-        return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+    public boolean checkBucketExist(String bucketName) {
+        try {
+            boolean bucketExists = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+            if (bucketExists)
+                log.info("checkBucketExist()::minIO bucket {} is exist", bucketName);
+            else
+                log.info("checkBucketExist()::minIO bucket {} is not exist", bucketName);
+            return bucketExists;
+        } catch (Exception e) {
+            log.error("checkBucketExist()::check minIO bucket error.please check minio status is running.");
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
