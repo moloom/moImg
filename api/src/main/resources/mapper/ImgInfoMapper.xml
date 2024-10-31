@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.moloom.img.api.dao.ImgInfoDao">
+
+    <insert id="insertImgInfo" parameterType="com.moloom.img.api.entity.ImgInfo">
+        insert into img_info(img_url,
+                             original_full_name,
+                             storage_full_name,
+                             storage_path,
+                             size,
+                             extension,
+                             token,
+                             width,
+                             height,
+                             img_category,
+                             camera_info,
+                             latitude,
+                             longitude,
+                             altitude,
+                             original_created_time,
+                             original_updated_time,
+                             created_by,
+                             latest_view_time)
+        values (#{imgUrl},
+                #{originalFullName},
+                #{storageFullName},
+                #{storagePath},
+                #{size},
+                #{extension},
+                #{token},
+                #{width},
+                #{height},
+                #{imgCategoryValue},
+                #{cameraInfo},
+                #{latitude},
+                #{longitude},
+                #{altitude},
+                #{originalCreatedTime},
+                #{originalUpdatedTime},
+                #{createdBy},
+                #{latestViewTime})
+    </insert>
+
+    <update id="updateImgInfo" parameterType="com.moloom.img.api.entity.ImgInfo">
+        UPDATE img_info
+        <set>
+            <if test="imgUrl != null and imgUrl != ''">
+                img_url = #{imgUrl},
+            </if>
+            <if test="originalFullName != null and originalFullName != ''">
+                original_full_name = #{originalFullName},
+            </if>
+            <if test="storageFullName != null and storageFullName != ''">
+                storage_full_name = #{storageFullName},
+            </if>
+            <if test="storagePath != null and storagePath != ''">
+                storage_path = #{storagePath},
+            </if>
+            <if test="size != null">
+                size = #{size},
+            </if>
+            <if test="extension != null and extension != ''">
+                extension = #{extension},
+            </if>
+            <if test="token != null and token != ''">
+                token = #{token},
+            </if>
+            <if test="width != null">
+                width = #{width},
+            </if>
+            <if test="height != null">
+                height = #{height},
+            </if>
+            <if test="imgCategory != null">
+                img_category = #{imgCategoryValue},
+            </if>
+            <if test="cameraInfo != null and cameraInfo != ''">
+                camera_info = #{cameraInfo},
+            </if>
+            <if test="latitude != null">
+                latitude = #{latitude},
+            </if>
+            <if test="longitude != null">
+                longitude = #{longitude},
+            </if>
+            <if test="altitude != null">
+                altitude = #{altitude},
+            </if>
+            <if test="originalCreatedTime != null">
+                original_created_time = #{originalCreatedTime},
+            </if>
+            <if test="originalUpdatedTime != null">
+                original_updated_time = #{originalUpdatedTime},
+            </if>
+            <if test="viewCount != null">
+                view_count = #{viewCount},
+            </if>
+            <if test="viewUser != null">
+                view_user = #{viewUser},
+            </if>
+            <if test="createdBy != null">
+                created_by = #{createdBy},
+            </if>
+            <if test="latestViewTime != null">
+                latest_view_time = #{latestViewTime},
+            </if>
+        </set>
+        WHERE img_id = #{imgId}
+    </update>
+
+
+</mapper>
