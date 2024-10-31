@@ -35,6 +35,8 @@ public enum ImgCategory {
                 return THUMBNAIL;
             case 3:
                 return CUSTOM;
+            default:
+                return null;
         }
     }
 
