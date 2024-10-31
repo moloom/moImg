@@ -1,5 +1,8 @@
 package com.moloom.img.api.utils;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * @author: moloom
  * @date: 2024-10-13 23:49
@@ -9,22 +12,32 @@ public class StringGenerator {
 
     // 基础字符
     private static final String CHARACTERS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    // 字符集的长度
+    // 基础字符集的长度
     private static final int CHARACTERS_LENGTH = CHARACTERS.length();
     // token的长度
-    private static final int TOKEN_LENGTH = 32;
+    private static final int TOKEN_LENGTH = 20;
+
+    //文件资源的访问字符串长度
+    private static final int URL_LENGTH = 32;
 
 
     public static String getToken() {
+        return generateString(TOKEN_LENGTH);
+    }
+
+    public static String getURL() {
+        return generateString(URL_LENGTH);
+    }
+
+    public static String generateString(int length) {
         //StringBuilder 比 StringBuffer 几乎快一倍
-        StringBuilder token = new StringBuilder();
+        StringBuilder string = new StringBuilder();
 
         //字符串拼接token
-        for (int i = 0; i < TOKEN_LENGTH; ++i) {
+        for (int i = 0; i < length; ++i) {
             int randomIndex = (int) (Math.random() * CHARACTERS_LENGTH);
-            token.append(CHARACTERS.charAt(randomIndex));
+            string.append(CHARACTERS.charAt(randomIndex));
         }
-
-        return token.toString();
+        return string.toString();
     }
 }
