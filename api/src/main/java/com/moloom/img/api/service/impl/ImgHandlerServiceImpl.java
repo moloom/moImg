@@ -1,10 +1,13 @@
 package com.moloom.img.api.service.impl;
 
 import com.moloom.img.api.config.BucketConfig;
+import com.moloom.img.api.dao.ImgInfoDao;
+import com.moloom.img.api.entity.ImgCategory;
 import com.moloom.img.api.entity.ImgInfo;
 import com.moloom.img.api.service.ImgHandlerService;
 import com.moloom.img.api.to.Buckets;
 import com.moloom.img.api.to.R;
+import com.moloom.img.api.utils.StringGenerator;
 import com.moloom.img.api.vo.FileUploadVo;
 import io.minio.*;
 import io.minio.errors.*;
@@ -43,6 +46,9 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
     @Resource
     private MinioServiceImpl minioService;
 
+    @Resource
+    private ImgInfoDao imgInfoDao;
+
     @Value("${moimg.upload.upload-root-path}")
     private String prePath;
 
@@ -54,7 +60,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
 
 
     @PostConstruct
-    public void initImgBucketName() {
+    public void initImgBucket() {
         if (bucketConfig == null || bucketConfig.getBuckets() == null || bucketConfig.getBuckets().size() == 0) {
             log.error("class BucketConfig::Arg bucketConfig injects error");
             throw new IllegalStateException("bucketConfig is null or empty");
@@ -89,13 +95,40 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         if (!bucketExists)
             minioService.makeBucket(imgBucket);
         //处理：img存储在minIO的文件名及路径，存储于数据库的虚拟文件名，
+        //拼接存储路径，路径格式 token/originalName_imgCategory.extension
 
+        log.info("fileUploadVo.getMultipartFile().getContentType()::{}", fileUploadVo.getMultipartFile().getContentType());
+
+        fileUploadVo.setFileName(fileUploadVo.getMultipartFile().getOriginalFilename());
+        fileUploadVo.setFileExtension("jpg");
+        fileUploadVo.setBucketName(imgBucket.getBucketName());
+        StringBuilder imgStoragePath = new StringBuilder();
+        imgStoragePath.append(fileUploadVo.getToken())
+                .append("/")
+                .append(fileUploadVo.getFileName())
+                .append("_")
+                .append(ImgCategory.SOURCE.getName())
+                .append(".")
+                .append(fileUploadVo.getFileExtension());
+        fileUploadVo.setFileStoragePath(imgStoragePath.toString());
+
+        log.info("file info ::{}", fileUploadVo.toString());
         //存储img到minIO，异步处理(X)
         ObjectWriteResponse response = minioService.putObject(fileUploadVo);
         log.info(response.toString());
         //获取img元数据，保存到数据库，异步处理(X)
+        ImgInfo img = ImgInfo.builder()
+                .imgUrl(StringGenerator.getURL())
+                .originalFullName(fileUploadVo.getFileName())
+                .imgCategory(ImgCategory.SOURCE)
+                .size(fileUploadVo.getMultipartFile().getSize())
+                .extension(fileUploadVo.getFileExtension())
+                .storagePath(fileUploadVo.getFileStoragePath())
+                .token(fileUploadVo.getToken())
+                .build();
+        int imgAffected = imgInfoDao.insertImgInfo(img);
 
-
+        log.info("img::{}", img.toString());
         return R.success(response);
 
 
