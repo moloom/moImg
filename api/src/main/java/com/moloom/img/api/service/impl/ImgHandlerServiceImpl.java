@@ -115,7 +115,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         log.info("file info ::{}", fileUploadVo.toString());
         //存储img到minIO，异步处理(X)
         ObjectWriteResponse response = minioService.putObject(fileUploadVo);
-        log.info(response.toString());
+        log.info("ObjectWriteResponse::{}{}{}{}{}", response.etag(), response.bucket(), response.versionId(), response.object(), response.headers());
         //获取img元数据，保存到数据库，异步处理(X)
         ImgInfo img = ImgInfo.builder()
                 .imgUrl(StringGenerator.getURL())
@@ -129,7 +129,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         int imgAffected = imgInfoDao.insertImgInfo(img);
 
         log.info("img::{}", img.toString());
-        return R.success(response);
+        return R.success("ok-" + imgAffected);
 
 
     }
