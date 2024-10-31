@@ -38,4 +38,21 @@ public class ImgInfo {
     private Timestamp createdTime;
     private Timestamp updatedTime;
     private Timestamp latestViewTime;
+
+    //不在数据库之内
+    private byte imgCategoryValue;
+
+    public ImgInfo setImgCategory(ImgCategory imgCategory) {
+        this.imgCategory = imgCategory;
+        //给imgCategoryValue赋值
+        this.imgCategoryValue = imgCategory.getValue();
+        return this;
+    }
+
+    public ImgInfo setImgCategoryValue(byte imgCategoryValue) {
+        this.imgCategoryValue = imgCategoryValue;
+        //给imgCategory赋值
+        imgCategory = ImgCategory.matchFromValue(imgCategoryValue);
+        return this;
+    }
 }
