@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 @Data
 public class ImgInfo {
     private Long imgId;
+    private String imgUrl;  //资源访问字符串
     private String originalFullName;
     private String storageFullName;
     private String storagePath;
