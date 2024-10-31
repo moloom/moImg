@@ -21,6 +21,7 @@ public class ImgInfo {
     private String token;
     private Long width;
     private Long height;
+    private ImgCategory imgCategory;
     private String cameraInfo;
     private Float latitude;
     private Float longitude;
