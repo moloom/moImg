@@ -1,6 +1,8 @@
 package com.moloom.img.api.entity;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.sql.Timestamp;
 
@@ -10,6 +12,8 @@ import java.sql.Timestamp;
  * @description:
  */
 @Data
+@Builder
+@Accessors(chain = true)
 public class Users {
     private Long userId;
     private String username;

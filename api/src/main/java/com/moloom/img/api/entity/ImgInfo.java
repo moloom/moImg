@@ -1,6 +1,8 @@
 package com.moloom.img.api.entity;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.sql.Timestamp;
 
@@ -10,6 +12,8 @@ import java.sql.Timestamp;
  * @description: img info pojo
  */
 @Data
+@Builder
+@Accessors(chain = true)
 public class ImgInfo {
     private Long imgId;
     private String imgUrl;  //资源访问字符串
