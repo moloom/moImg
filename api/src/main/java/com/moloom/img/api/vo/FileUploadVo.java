@@ -1,6 +1,8 @@
 package com.moloom.img.api.vo;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -9,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
  * @description:
  */
 @Data
+@Builder
+@Accessors(chain = true)
 public class FileUploadVo {
     private String fileName;    //文件名，如果是在页面上传文件，页面会获取文件名，若是api则需自己获取
     private String fileExtension; //文件的拓展名，如果是在页面上传文件，页面会获取后缀，若是api则需自己获取
