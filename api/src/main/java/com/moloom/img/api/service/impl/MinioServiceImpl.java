@@ -83,7 +83,8 @@ public class MinioServiceImpl implements MinioService {
                             .builder()
                             .bucket(fileUploadVo.getBucketName())
                             .stream(fileUploadVo.getMultipartFile().getInputStream(), fileUploadVo.getMultipartFile().getSize(), -1)
-                            .object(fileUploadVo.getMultipartFile().getName() + ".jpg")
+                            .contentType(fileUploadVo.getContentType())
+                            .object(fileUploadVo.getFileStoragePath())
                             .build());
             return response;
         } catch (Exception e) {
