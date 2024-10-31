@@ -9,11 +9,11 @@
                           email)
         values (#{name},
                 #{password},
-                #{email}
+                #{email})
     </insert>
 
     <update id="updateUser" parameterType="com.moloom.img.api.entity.Users">
-        update user set
+        update users set
         <if test="name !=null and name !=''">
             name = #{name},
         </if>
