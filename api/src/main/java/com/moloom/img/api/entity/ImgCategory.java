@@ -27,6 +27,17 @@ public enum ImgCategory {
         return name;
     }
 
+    public static ImgCategory matchFromValue(byte value) {
+        switch (value) {
+            case 1:
+                return SOURCE;
+            case 2:
+                return THUMBNAIL;
+            case 3:
+                return CUSTOM;
+        }
+    }
+
     @Override
     public String toString() {
         return "ImgCategory{" +
