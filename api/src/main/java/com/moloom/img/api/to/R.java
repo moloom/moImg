@@ -1,13 +1,14 @@
 package com.moloom.img.api.to;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * @author: moloom
  * @date: 2024-10-20 04:47
- * @description: api返回类：code: 0表示成功，其他表示失败；msg: 提示信息，data: 数据
+ * @description: api返回类：code: 0表示成功，其他表示失败；msg: 提示信息，data: 数据。
+ * HashMap类会颠倒key的顺序，所以这里使用LinkedHashMap
  */
-public class R<T> extends HashMap<String, Object> {
+public class R<T> extends LinkedHashMap<String, Object> {
     private static final long serialVersionUID = 1L;
 
     public R() {
