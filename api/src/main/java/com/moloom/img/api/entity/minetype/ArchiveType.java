@@ -1,4 +1,4 @@
-package com.moloom.img.api.entity.utils;
+package com.moloom.img.api.entity.minetype;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +13,7 @@ public enum ArchiveType {
     ZIP("application/zip", Arrays.asList("zip"), "Compressed Archive File"),
     RAR("application/x-rar-compressed", Arrays.asList("rar"), "RAR archive"),
     SEVEN_Z("application/x-7z-compressed", Arrays.asList("7z"), "7-zip archive"),
-    GZIP("application/gzip", Arrays.asList(".gz", ".tgz", "tar.gz"), "Gzip Compressed Archive"),
+    GZIP("application/gzip", Arrays.asList("gz", "tgz", "tar.gz"), "Gzip Compressed Archive"),
     TAR("application/x-tar", Arrays.asList("tar"), "GUN tar File Archive without compression (GUN Tape Archive)"),
     TAR_GZ("application/x-gtar", Arrays.asList("gtar"), "GNU tar Compressed File Archive (GNU Tape Archive)"),
     XZ("application/x-xz", Arrays.asList("xz", "tar.xz"), "A lossless data compression file format based on the LZMA algorithm"),
