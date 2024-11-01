@@ -58,8 +58,6 @@ public class UploadDispatcherServiceImpl implements UploadDispatcherService {
                 throw new RuntimeException(e);
             }
 
-        log.debug("uploadDispatcher::文件类型:{}\t", fileUploadVo.getFileExtension());
-
         //匹配文件类型对应的处理方法
         if (fileUploadVo.getContentType().startsWith("image/"))
             return imgHandlerService.imghandler(fileUploadVo);
