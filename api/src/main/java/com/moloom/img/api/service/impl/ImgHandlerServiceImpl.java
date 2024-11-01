@@ -15,11 +15,18 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
+import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.TikaMimeKeys;
+import org.apache.tika.mime.MimeType;
+import org.apache.tika.mime.MimeTypeException;
+import org.apache.tika.mime.MimeTypes;
+import org.apache.tika.parser.AutoDetectParser;
+import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -63,7 +70,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
     public void initImgBucket() {
         if (bucketConfig == null || bucketConfig.getBuckets() == null || bucketConfig.getBuckets().size() == 0) {
             log.error("class BucketConfig::Arg bucketConfig injects error");
-            throw new IllegalStateException("bucketConfig is null or empty");
+            throw new IllegalStateException();
         }
         //获取存储图片的bucket 名称，规定了，第一个是存图片的
         imgBucket = bucketConfig.getBuckets().get(0);
@@ -90,33 +97,69 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         } catch (Exception e) {
             // 处理异常
         }*/
+
         //确保bucket存在
         boolean bucketExists = minioService.checkBucketExist(imgBucket.getBucketName());
         if (!bucketExists)
             minioService.makeBucket(imgBucket);
-        //处理：img存储在minIO的文件名及路径，存储于数据库的虚拟文件名，
-        //拼接存储路径，路径格式 token/originalName_imgCategory.extension
 
-        log.info("fileUploadVo.getMultipartFile().getContentType()::{}", fileUploadVo.getMultipartFile().getContentType());
-
-        fileUploadVo.setFileName(fileUploadVo.getMultipartFile().getOriginalFilename());
-        fileUploadVo.setFileExtension("jpg");
+        //获取文件后缀名
+        if (fileUploadVo.getFileExtension() == null || fileUploadVo.getFileExtension().isEmpty()) {
+            try {
+                //使用 Tika的MimeTypes获取文件后缀名
+                String extension = MimeTypes.getDefaultMimeTypes().forName(fileUploadVo.getContentType()).getExtension();
+                if (extension == null || extension.isEmpty())
+                    throw new NullPointerException("get image extension error by mimetype,please check the uploaded file type is images!");
+                fileUploadVo.setFileExtension(extension);
+            } catch (MimeTypeException e) {
+                throw new RuntimeException();
+            }
+        }
+        //设置文件名
+        if (fileUploadVo.getFileName() == null || fileUploadVo.getFileName().isEmpty()) {
+            String filename = fileUploadVo.getMultipartFile().getOriginalFilename();
+            int lastIndexOf = filename.lastIndexOf('.');
+            if (lastIndexOf > 0)
+                filename = filename.substring(0, lastIndexOf);
+            fileUploadVo.setFileName(filename);
+        }
+        log.info("fileUploadVo.getMultipartFile().getOriginalFilename()文件名::{}", fileUploadVo.getMultipartFile().getOriginalFilename());
+        //设置存储bucket名称
         fileUploadVo.setBucketName(imgBucket.getBucketName());
-        StringBuilder imgStoragePath = new StringBuilder();
-        imgStoragePath.append(fileUploadVo.getToken())
+        //拼接存储路径，路径格式 {token}/{originalName}_{imgCategory}{extension}
+        StringBuilder imgStoragePath = new StringBuilder()
+                .append(fileUploadVo.getToken())
                 .append("/")
                 .append(fileUploadVo.getFileName())
                 .append("_")
                 .append(ImgCategory.SOURCE.getName())
-                .append(".")
                 .append(fileUploadVo.getFileExtension());
         fileUploadVo.setFileStoragePath(imgStoragePath.toString());
 
         log.info("file info ::{}", fileUploadVo.toString());
         //存储img到minIO，异步处理(X)
         ObjectWriteResponse response = minioService.putObject(fileUploadVo);
-        log.info("ObjectWriteResponse::{}{}{}{}{}", response.etag(), response.bucket(), response.versionId(), response.object(), response.headers());
+        log.info("ObjectWriteResponse::{}\n={}\n={}\n={}\n={}", response.etag(), response.bucket(), response.versionId(), response.object(), response.headers());
+
         //获取img元数据，保存到数据库，异步处理(X)
+        try {
+            Parser parser = new AutoDetectParser();
+            BodyContentHandler handler = new BodyContentHandler();
+            Metadata metadata = new Metadata();
+            ParseContext context = new ParseContext();
+
+            parser.parse(fileUploadVo.getMultipartFile().getInputStream(), handler, metadata, context);
+            log.info("元信息获取::{}", handler.toString());
+            //getting the list of all metadata elements
+            String[] metadataNames = metadata.names();
+            log.info("\n\n");
+            for (String name : metadataNames) {
+                log.info("{}: {}", name, metadata.get(name));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         ImgInfo img = ImgInfo.builder()
                 .imgUrl(StringGenerator.getURL())
                 .originalFullName(fileUploadVo.getFileName())
