@@ -5,12 +5,9 @@ import com.moloom.img.api.service.UploadDispatcherService;
 import com.moloom.img.api.to.R;
 import com.moloom.img.api.service.CommonService;
 import com.moloom.img.api.vo.FileUploadVo;
-import io.minio.MinioClient;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,10 +25,10 @@ public class UploadController {
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
-    @Autowired
+    @Resource
     private CommonService commonService;
 
-    @Autowired
+    @Resource
     private UploadDispatcherService imgUploadDispatcherService;
 
     @RequestMapping(value = "/upload/{token}", method = RequestMethod.POST, consumes = "multipart/form-data")
@@ -42,13 +39,12 @@ public class UploadController {
         log.info("request.getRemoteHost() = " + request.getRemoteHost());
         log.info("X-Forwarded-For:" + request.getHeader("X-Forwarded-For"));
         log.info("X-real-ip:" + request.getHeader("X-Real-IP"));
-        fileUploadVo.setToken(token);
-        fileUploadVo.setMultipartFile(multipartFile);
-        log.debug(fileUploadVo.toString());
+        fileUploadVo.setToken(token).setMultipartFile(multipartFile);
+        log.info("controller::::{}",fileUploadVo.toString());
         R r = null;
         try {
             r = imgUploadDispatcherService.uploadDispatcher(fileUploadVo);
-        } catch (ExtensionMismatchException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());
         }
