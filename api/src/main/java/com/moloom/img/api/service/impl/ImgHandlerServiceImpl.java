@@ -163,11 +163,13 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         ImgInfo img = ImgInfo.builder()
                 .imgUrl(StringGenerator.getURL())
                 .originalFullName(fileUploadVo.getFileName())
-                .imgCategory(ImgCategory.SOURCE)
+                .storageFullName(fileUploadVo.getFileName())
+                .storagePath(fileUploadVo.getFileStoragePath())
                 .size(fileUploadVo.getMultipartFile().getSize())
                 .extension(fileUploadVo.getFileExtension())
-                .storagePath(fileUploadVo.getFileStoragePath())
                 .token(fileUploadVo.getToken())
+                .imgCategory(ImgCategory.SOURCE)
+
                 .build();
         int imgAffected = imgInfoDao.insertImgInfo(img);
 
