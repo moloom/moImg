@@ -12,14 +12,14 @@ public enum ImgCategory {
 
 
     private final String name;
-    private final Byte value;
+    private final byte value;
 
     ImgCategory(String name, int value) {
         this.name = name;
         this.value = (byte) value;
     }
 
-    public Byte getValue() {
+    public byte getValue() {
         return value;
     }
 
