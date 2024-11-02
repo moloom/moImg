@@ -15,12 +15,12 @@ import java.sql.Timestamp;
 @Builder
 @Accessors(chain = true)
 public class Users {
-    private Long userId;
+    private long userId;
     private String username;
     private String password;
     private String email;
-    private Boolean emailActive;
-    private Byte status;
+    private boolean emailActive;
+    private byte status;
     private Timestamp latestLoggedTime;
     private Timestamp createdTime;
     private Timestamp updatedTime;
