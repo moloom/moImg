@@ -50,5 +50,15 @@ public interface ImgInfoDao {
      * @description
      */
     @Select("SELECT * FROM img_info WHERE img_id = #{imgId}")
-    public ImgInfo selectById(Long imgId);
+    public ImgInfo selectOneById(Long imgId);
+
+    /**
+     * @param imgUrl
+     * @return id
+     * @author moloom
+     * @date 2024-11-04 00:50:04
+     * @description search databases by img_url for check img_url is existed or not
+     */
+    @Select("SELECT img_id FROM img_info WHERE img_url = #{imgUrl}")
+    public Long imgExistById(String imgUrl);
 }
