@@ -2,6 +2,7 @@ package com.moloom.img.api.service.impl;
 
 import com.moloom.img.api.service.MinioService;
 import com.moloom.img.api.to.Buckets;
+import com.moloom.img.api.to.DownloadTO;
 import com.moloom.img.api.vo.FileUploadVo;
 import io.minio.*;
 import jakarta.annotation.Resource;
@@ -94,7 +95,17 @@ public class MinioServiceImpl implements MinioService {
     }
 
     @Override
-    public InputStream getObject(FileUploadVo fileUploadVo) {
-        return null;
+    public InputStream getObject(DownloadTO downloadTO) {
+        try {
+            InputStream stream = minioClient.getObject(
+                    GetObjectArgs.builder()
+                            .bucket(downloadTO.getBucketName())
+                            .object(downloadTO.getStoragePath())
+                            .build());
+            return stream;
+        } catch (Exception e) {
+            log.error("getObject()::get object from minIO error");
+            throw new RuntimeException(e);
+        }
     }
 }
