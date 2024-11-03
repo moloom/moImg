@@ -2,6 +2,7 @@ package com.moloom.img.api.service;
 
 
 import com.moloom.img.api.to.Buckets;
+import com.moloom.img.api.to.DownloadTO;
 import com.moloom.img.api.vo.FileUploadVo;
 import io.minio.ObjectWriteResponse;
 import io.minio.errors.*;
@@ -56,11 +57,11 @@ public interface MinioService {
     public ObjectWriteResponse putObject(FileUploadVo fileUploadVo);
 
     /**
-     * @param fileUploadVo
+     * @param downloadTO
      * @return return InputStream,and must be closed after use to release network resources.
      * @author moloom
      * @date 2024-10-31 01:35:09
      * @description Gets data of an object.
      */
-    public InputStream getObject(FileUploadVo fileUploadVo);
+    public InputStream getObject(DownloadTO downloadTO);
 }
