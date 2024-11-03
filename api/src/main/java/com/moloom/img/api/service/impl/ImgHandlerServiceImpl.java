@@ -6,36 +6,30 @@ import com.moloom.img.api.entity.ImgCategory;
 import com.moloom.img.api.entity.ImgInfo;
 import com.moloom.img.api.service.ImgHandlerService;
 import com.moloom.img.api.to.Buckets;
+import com.moloom.img.api.to.DownloadTO;
 import com.moloom.img.api.to.R;
 import com.moloom.img.api.utils.StringGenerator;
 import com.moloom.img.api.vo.FileUploadVo;
 import io.minio.*;
-import io.minio.errors.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tika.Tika;
-import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
-import org.apache.tika.metadata.TikaMimeKeys;
-import org.apache.tika.mime.MimeType;
 import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * @author: moloom
@@ -167,6 +161,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
                 .storagePath(fileUploadVo.getFileStoragePath())
                 .size(fileUploadVo.getMultipartFile().getSize())
                 .extension(fileUploadVo.getFileExtension())
+                .contentType(fileUploadVo.getContentType())
                 .token(fileUploadVo.getToken())
                 .imgCategory(ImgCategory.SOURCE)
 
@@ -190,5 +185,28 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
 //        System.out.println("multipartFile 是否为空：" + multipartFile == null);
 //        multipartFile.transferTo(new File(path + "/f2.jpeg"));
         return null;
+    }
+
+    @Override
+    public ResponseEntity<InputStreamResource> download(DownloadTO downloadTO) {
+        //判断img是否存在
+        long imgId = imgInfoDao.imgExistById(downloadTO.getUrl());
+        if (imgId == 0)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        ImgInfo imgInfo = imgInfoDao.selectOneById(imgId);
+        downloadTO.setStoragePath(imgInfo.getStoragePath());
+
+        //设置bucket
+        downloadTO.setBucketName(imgBucket.getBucketName());
+        //获取文件流
+        InputStreamResource inputStream = new InputStreamResource(minioService.getObject(downloadTO));
+
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + imgInfo.getOriginalFullName()); // inline 让浏览器直接展示
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.parseMediaType(imgInfo.getContentType()))
+                .body(inputStream);
     }
 }
