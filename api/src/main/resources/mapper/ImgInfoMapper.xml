@@ -33,7 +33,7 @@
                 #{token},
                 #{width},
                 #{height},
-                #{imgCategoryValue},
+                #{imgCategory},
                 #{cameraInfo},
                 #{latitude},
                 #{longitude},
@@ -78,7 +78,7 @@
                 height = #{height},
             </if>
             <if test="imgCategory != null">
-                img_category = #{imgCategoryValue},
+                img_category = #{imgCategory},
             </if>
             <if test="cameraInfo != null and cameraInfo != ''">
                 camera_info = #{cameraInfo},
