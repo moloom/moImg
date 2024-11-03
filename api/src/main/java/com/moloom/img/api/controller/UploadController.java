@@ -40,7 +40,7 @@ public class UploadController {
         log.info("X-Forwarded-For:" + request.getHeader("X-Forwarded-For"));
         log.info("X-real-ip:" + request.getHeader("X-Real-IP"));
         fileUploadVo.setToken(token).setMultipartFile(multipartFile);
-        log.info("controller::::{}",fileUploadVo.toString());
+        log.info("controller::::{}", fileUploadVo.toString());
         R r = null;
         try {
             r = imgUploadDispatcherService.uploadDispatcher(fileUploadVo);
@@ -50,20 +50,5 @@ public class UploadController {
         }
         return r;
     }
-
-/*    @RequestMapping(value = "/uploadd/{token}", method = RequestMethod.POST, consumes = "multipart/form-data")
-    public String upload(@RequestParam("file") FileInputStream inputStream,
-                         HttpServletRequest request,
-                         HttpSession session,
-                         @PathVariable String token) throws IOException {
-        //打印所有的参数
-        System.out.println("path:" + path);
-        System.out.println("request.getRemoteHost() = " + request.getRemoteHost());
-        System.out.println("X-Forwarded-For:" + request.getHeader("X-Forwarded-For"));
-        System.out.println("X-real-ip:" + request.getHeader("X-Real-IP"));
-//        System.out.println("inputStream 是否为空：" + inputStream == null);
-        FileCopyUtils.copy(inputStream, new FileOutputStream(path + "/f3.jpeg"));
-        return "xixixixihahaha~";
-    }*/
 
 }
