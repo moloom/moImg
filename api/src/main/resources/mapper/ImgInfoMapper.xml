@@ -10,6 +10,7 @@
                              storage_path,
                              size,
                              extension,
+                             content_type,
                              token,
                              width,
                              height,
@@ -28,6 +29,7 @@
                 #{storagePath},
                 #{size},
                 #{extension},
+                #{contentType},
                 #{token},
                 #{width},
                 #{height},
@@ -62,6 +64,9 @@
             </if>
             <if test="extension != null and extension != ''">
                 extension = #{extension},
+            </if>
+            <if test="contentType != null and contentType != ''">
+                content_type = #{contentType},
             </if>
             <if test="token != null and token != ''">
                 token = #{token},
