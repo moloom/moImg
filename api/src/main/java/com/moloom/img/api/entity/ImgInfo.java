@@ -22,6 +22,7 @@ public class ImgInfo {
     private String storagePath;
     private long size;
     private String extension;
+    private String contentType;
     private String token;
     private long width;
     private long height;
