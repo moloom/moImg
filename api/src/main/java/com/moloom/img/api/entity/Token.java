@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 @Accessors(chain = true)
 public class Token {
     private String token;
-    private long userId;
-    private byte status;
+    private Long userId;
+    private Byte status;
     private Timestamp createdTime;
 }

@@ -15,9 +15,9 @@ import java.sql.Timestamp;
 @Builder
 @Accessors(chain = true)
 public class FileTag {
-    private long id;
-    private long fileId;
-    private long tagId;
-    private long createdBy;
+    private Long id;
+    private Long fileId;
+    private Long tagId;
+    private Long createdBy;
     private Timestamp createdTime;
 }

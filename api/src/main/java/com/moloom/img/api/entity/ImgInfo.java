@@ -15,27 +15,27 @@ import java.sql.Timestamp;
 @Builder
 @Accessors(chain = true)
 public class ImgInfo {
-    private long imgId;
+    private Long imgId;
     private String imgUrl;  //资源访问字符串
     private String originalFullName;
     private String storageFullName;
     private String storagePath;
-    private long size;
+    private Long size;
     private String extension;
     private String contentType;
     private String token;
-    private long width;
-    private long height;
+    private Long width;
+    private Long height;
     private ImgCategory imgCategory;
     private String cameraInfo;
-    private float latitude;
-    private float longitude;
-    private float altitude;
+    private Float latitude;
+    private Float longitude;
+    private Float altitude;
     private Timestamp originalCreatedTime;
     private Timestamp originalUpdatedTime;
-    private long viewCount;
-    private long viewUser;
-    private long createdBy;
+    private Long viewCount;
+    private Long viewUser;
+    private Long createdBy;
     private Timestamp createdTime;
     private Timestamp updatedTime;
     private Timestamp latestViewTime;

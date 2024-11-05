@@ -13,6 +13,6 @@ import lombok.experimental.Accessors;
 @Builder
 @Accessors(chain = true)
 public class Tag {
-    private long tagId;
+    private Long tagId;
     private String tagName;
 }
