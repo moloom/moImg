@@ -26,6 +26,7 @@ public class ImgCategoryTypeHandler extends BaseTypeHandler<ImgCategory> {
 
     @Override
     public ImgCategory getNullableResult(ResultSet rs, String columnName) throws SQLException {
+        System.out.println("\n\n" + rs.getByte(columnName) + "\n\n");
         byte value = rs.getByte(columnName);
         return ImgCategory.matchFromValue(value);
     }
