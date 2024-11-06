@@ -148,7 +148,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
             String[] metadataNames = metadata.names();
             log.info("\n\n");
             for (String name : metadataNames) {
-                log.info("{}: {}", name, metadata.get(name));
+                log.info("{}==={}", name, metadata.get(name));
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -156,8 +156,8 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
 
         ImgInfo img = ImgInfo.builder()
                 .imgUrl(StringGenerator.getURL())
-                .originalFullName(fileUploadVo.getFileName())
-                .storageFullName(fileUploadVo.getFileName())
+                .originalFullName(fileUploadVo.getFileName() + fileUploadVo.getFileExtension())
+                .storageFullName(imgStoragePath.substring(imgStoragePath.indexOf("/"), imgStoragePath.length()))
                 .storagePath(fileUploadVo.getFileStoragePath())
                 .size(fileUploadVo.getMultipartFile().getSize())
                 .extension(fileUploadVo.getFileExtension())
@@ -168,8 +168,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
                 .build();
         int imgAffected = imgInfoDao.insertImgInfo(img);
 
-        log.info("img::{}", img.toString());
-        return R.success("ok-" + imgAffected);
+        return R.success(img.getImgUrl());
 
 
     }
