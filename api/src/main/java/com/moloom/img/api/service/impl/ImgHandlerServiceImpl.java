@@ -168,7 +168,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
                 .build();
         int imgAffected = imgInfoDao.insertImgInfo(img);
 
-        return R.success(img.getImgUrl());
+        return R.success().setData(img.getImgUrl());
 
 
     }
