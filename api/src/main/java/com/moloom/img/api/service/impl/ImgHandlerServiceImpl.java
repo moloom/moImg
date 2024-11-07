@@ -157,7 +157,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         ImgInfo img = ImgInfo.builder()
                 .imgUrl(StringGenerator.getURL())
                 .originalFullName(fileUploadVo.getFileName() + fileUploadVo.getFileExtension())
-                .storageFullName(imgStoragePath.substring(imgStoragePath.indexOf("/") - 1, imgStoragePath.length()))
+                .storageFullName(imgStoragePath.substring(imgStoragePath.indexOf("/") + 1, imgStoragePath.length()))
                 .storagePath(fileUploadVo.getFileStoragePath())
                 .size(fileUploadVo.getMultipartFile().getSize())
                 .extension(fileUploadVo.getFileExtension())
