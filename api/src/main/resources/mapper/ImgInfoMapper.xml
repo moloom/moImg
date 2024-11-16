@@ -13,9 +13,9 @@
                              content_type,
                              token,
                              width,
-                             height,
+                             length,
                              img_category,
-                             camera_info,
+                             img_camera_info_id,
                              latitude,
                              longitude,
                              altitude,
@@ -32,9 +32,9 @@
                 #{contentType},
                 #{token},
                 #{width},
-                #{height},
+                #{length},
                 #{imgCategory},
-                #{cameraInfo},
+                #{imgCameraInfoId},
                 #{latitude},
                 #{longitude},
                 #{altitude},
@@ -75,13 +75,13 @@
                 width = #{width},
             </if>
             <if test="height != null">
-                height = #{height},
+                length = #{length},
             </if>
             <if test="imgCategory != null">
                 img_category = #{imgCategory},
             </if>
             <if test="cameraInfo != null and cameraInfo != ''">
-                camera_info = #{cameraInfo},
+                img_camera_info_id = #{imgCameraInfoId},
             </if>
             <if test="latitude != null">
                 latitude = #{latitude},
