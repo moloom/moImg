@@ -29,7 +29,7 @@ import static org.apache.commons.lang3.time.DateUtils.parseDate;
 @Accessors(chain = true)
 @Builder
 public class ImgCameraInfo {
-    private Long id; // 主键
+    private Long imgCameraInfoId; // 主键
     private String imageDescription;    //图片描述
     private String make;        //摄像头品牌
     private String model;       //摄像头型号
