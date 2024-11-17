@@ -4,20 +4,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.tika.metadata.Metadata;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.Date;
-
-import static java.lang.Boolean.parseBoolean;
-import static java.lang.Double.parseDouble;
-import static java.lang.Float.parseFloat;
-import static java.lang.Integer.parseInt;
-import static org.apache.commons.lang3.time.DateUtils.parseDate;
 
 /**
  * @author: moloom
@@ -85,9 +76,9 @@ public class ImgCameraInfo {
         this.setSoftware(metadata.get("Firmware Version"));
         this.setOrientation(metadata.get("tiff:Orientation"));
         if (metadata.get("tiff:XResolution") != null)
-            this.setXResolution(parseDouble(metadata.get("tiff:XResolution")));
+            this.setXResolution(Double.valueOf(metadata.get("tiff:XResolution")));
         if (metadata.get("tiff:YResolution") != null)
-            this.setYResolution(parseDouble(metadata.get("tiff:YResolution")));
+            this.setYResolution(Double.valueOf(metadata.get("tiff:YResolution")));
         this.setResolutionUnit(metadata.get("tiff:ResolutionUnit"));
         this.setYCbCrPositioning(metadata.get("Exif IFD0:YCbCr Positioning"));
         this.setComponentsConfiguration(metadata.get("Exif SubIFD:Components Configuration"));
@@ -98,18 +89,18 @@ public class ImgCameraInfo {
         this.setExifVersion(metadata.get("Exif SubIFD:Exif Version"));
         this.setShutterSpeed(metadata.get("Exif SubIFD:Shutter Speed Value"));
         if (metadata.get("exif:IsoSpeedRatings") != null)
-            this.setIsoSpeedRatings(parseInt(metadata.get("exif:IsoSpeedRatings")));
+            this.setIsoSpeedRatings(Integer.valueOf(metadata.get("exif:IsoSpeedRatings")));
         this.setExposureTime(metadata.get("Exif SubIFD:Exposure Time"));
         this.setExposureMode(metadata.get("Exif SubIFD:Exposure Mode"));
         this.setExposureBiasValue(metadata.get("Exif SubIFD:Exposure Bias Value:"));
         if (metadata.get("exif:FNumber") != null)
-            this.setFNumber(parseFloat(metadata.get("exif:FNumber")));
+            this.setFNumber(Float.valueOf(metadata.get("exif:FNumber")));
         this.setMaxApertureValue(metadata.get("Exif SubIFD:Aperture Value"));
         this.setMeteringMode(metadata.get("Exif SubIFD:Metering Mode"));
 //        this.setLightSource(metadata.get("Light Source"));
         this.setWhiteBalance(metadata.get("Exif SubIFD:White Balance Mode"));
         if (metadata.get("Exif SubIFD:Brightness Value") != null)
-            this.setBrightness(parseFloat(metadata.get("Exif SubIFD:Brightness Value")));
+            this.setBrightness(Float.valueOf(metadata.get("Exif SubIFD:Brightness Value")));
         this.setFocalLength(metadata.get("Exif SubIFD:Focal Length"));
         this.setFocalLength35(metadata.get("Exif SubIFD:Focal Length 35"));
         this.setFlash(metadata.get("Exif SubIFD:Flash"));
@@ -125,7 +116,7 @@ public class ImgCameraInfo {
         if (metadata.get("tiff:ImageWidth") != null)
             this.setWidth(Integer.valueOf(metadata.get("tiff:ImageWidth")));
         if (metadata.get("tiff:ImageLength") != null)
-            this.setLength(parseInt(metadata.get("tiff:ImageLength")));
+            this.setLength(Integer.valueOf(metadata.get("tiff:ImageLength")));
         return this;
     }
 
