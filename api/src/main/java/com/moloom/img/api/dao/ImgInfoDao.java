@@ -27,7 +27,7 @@ public interface ImgInfoDao {
      * @return affect row count;0 error or >0 success
      * @author moloom
      * @date 2024-11-01 00:54:42
-     * @description update data
+     * @description update data,only update not null and not empty fields!
      */
     public int update(ImgInfo imgInfo);
 
