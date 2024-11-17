@@ -20,7 +20,7 @@ public interface ImgInfoDao {
      * @date 2024-11-01 00:41:12
      * @description insert a row data
      */
-    public int insertImgInfo(ImgInfo imgInfo);
+    public int insert(ImgInfo imgInfo);
 
     /**
      * @param imgInfo 值不为空的才会修改进数据库
@@ -29,7 +29,7 @@ public interface ImgInfoDao {
      * @date 2024-11-01 00:54:42
      * @description update data
      */
-    public int updateImgInfo(ImgInfo imgInfo);
+    public int update(ImgInfo imgInfo);
 
 
     /**
