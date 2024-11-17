@@ -43,7 +43,8 @@
                                      date_time_original,
                                      subsec_time_original,
                                      date_time_digitized,
-                                     subsec_time_digitized)
+                                     subsec_time_digitized,
+                                     created_by)
         values (#{imageDescription},
                 #{make}, #{model},
                 #{software},
@@ -79,125 +80,129 @@
                 #{dateTimeOriginal},
                 #{subsecTimeOriginal},
                 #{dateTimeDigitized},
-                #{subsecTimeDigitized})
+                #{subsecTimeDigitized},
+                #{createdBy})
     </insert>
 
     <!-- 更新数据 -->
     <update id="update" parameterType="com.moloom.img.api.entity.ImgCameraInfo">
         UPDATE img_camera_info
         <set>
-        <if test="imageDescription != null and imageDescription.trim() != ''">
-            image_description = #{imageDescription},
-        </if>
-        <if test="make != null and make.trim() != ''">
-            make = #{make},
-        </if>
-        <if test="model != null and model.trim() != ''">
-            model = #{model},
-        </if>
-        <if test="software != null and software.trim() != ''">
-            software = #{software},
-        </if>
-        <if test="orientation != null and orientation.trim() != ''">
-            orientation = #{orientation},
-        </if>
-        <if test="xResolution != null">
-            x_resolution = #{xResolution},
-        </if>
-        <if test="yResolution != null">
-            y_resolution = #{yResolution},
-        </if>
-        <if test="resolutionUnit != null and resolutionUnit.trim() != ''">
-            resolution_unit = #{resolutionUnit},
-        </if>
-        <if test="yCbCrPositioning != null and yCbCrPositioning.trim() != ''">
-            y_cb_cr_positioning = #{yCbCrPositioning},
-        </if>
-        <if test="componentsConfiguration != null and componentsConfiguration.trim() != ''">
-            components_configuration = #{componentsConfiguration},
-        </if>
-        <if test="compressedBitsPerPixel != null and compressedBitsPerPixel.trim() != ''">
-            compressed_bits_per_pixel = #{compressedBitsPerPixel},
-        </if>
-        <if test="colorSpace != null and colorSpace.trim() != ''">
-            color_space = #{colorSpace},
-        </if>
-        <if test="compression != null and compression.trim() != ''">
-            compression = #{compression},
-        </if>
-        <if test="exifVersion != null and exifVersion.trim() != ''">
-            exif_version = #{exifVersion},
-        </if>
-        <if test="shutterSpeed != null and shutterSpeed.trim() != ''">
-            shutter_speed = #{shutterSpeed},
-        </if>
-        <if test="isoSpeedRatings != null">
-            iso_speed_ratings = #{isoSpeedRatings},
-        </if>
-        <if test="exposureTime != null and exposureTime.trim() != ''">
-            exposure_time = #{exposureTime},
-        </if>
-        <if test="exposureMode != null and exposureMode.trim() != ''">
-            exposure_mode = #{exposureMode},
-        </if>
-        <if test="exposureBiasValue != null and exposureBiasValue.trim() != ''">
-            exposure_bias_value = #{exposureBiasValue},
-        </if>
-        <if test="fNumber != null">
-            f_number = #{fNumber},
-        </if>
-        <if test="maxApertureValue != null and maxApertureValue.trim() != ''">
-            max_aperture_value = #{maxApertureValue},
-        </if>
-        <if test="meteringMode != null and meteringMode.trim() != ''">
-            metering_mode = #{meteringMode},
-        </if>
-        <if test="lightSource != null and lightSource.trim() != ''">
-            light_source = #{lightSource},
-        </if>
-        <if test="brightness != null">
-            brightness = #{brightness},
-        </if>
-        <if test="whiteBalance != null and whiteBalance.trim() != ''">
-            white_balance = #{whiteBalance},
-        </if>
-        <if test="focalLength != null and focalLength.trim() != ''">
-            focal_length = #{focalLength},
-        </if>
-        <if test="focalLength35 != null and focalLength35.trim() != ''">
-            focal_length35 = #{focalLength35},
-        </if>
-        <if test="flash != null and flash.trim() != ''">
-            flash = #{flash},
-        </if>
-        <if test="flashValue != null">
-            flash_value = #{flashValue},
-        </if>
-        <if test="flashPixVersion != null and flashPixVersion.trim() != ''">
-            flash_pix_version = #{flashPixVersion},
-        </if>
-        <if test="sceneCaptureType != null and sceneCaptureType.trim() != ''">
-            scene_capture_type = #{sceneCaptureType},
-        </if>
-        <if test="lensMake != null and lensMake.trim() != ''">
-            lens_make = #{lensMake},
-        </if>
-        <if test="lensModel != null and lensModel.trim() != ''">
-            lens_model = #{lensModel},
-        </if>
-        <if test="dateTimeOriginal != null">
-            date_time_original = #{dateTimeOriginal},
-        </if>
-        <if test="subsecTimeOriginal != null">
-            subsec_time_original = #{subsecTimeOriginal},
-        </if>
-        <if test="dateTimeDigitized != null">
-            date_time_digitized = #{dateTimeDigitized},
-        </if>
-        <if test="subsecTimeDigitized != null">
-            subsec_time_digitized = #{subsecTimeDigitized},
-        </if>
-    </set>
+            <if test="imageDescription != null and imageDescription.trim() != ''">
+                image_description = #{imageDescription},
+            </if>
+            <if test="make != null and make.trim() != ''">
+                make = #{make},
+            </if>
+            <if test="model != null and model.trim() != ''">
+                model = #{model},
+            </if>
+            <if test="software != null and software.trim() != ''">
+                software = #{software},
+            </if>
+            <if test="orientation != null and orientation.trim() != ''">
+                orientation = #{orientation},
+            </if>
+            <if test="xResolution != null">
+                x_resolution = #{xResolution},
+            </if>
+            <if test="yResolution != null">
+                y_resolution = #{yResolution},
+            </if>
+            <if test="resolutionUnit != null and resolutionUnit.trim() != ''">
+                resolution_unit = #{resolutionUnit},
+            </if>
+            <if test="yCbCrPositioning != null and yCbCrPositioning.trim() != ''">
+                y_cb_cr_positioning = #{yCbCrPositioning},
+            </if>
+            <if test="componentsConfiguration != null and componentsConfiguration.trim() != ''">
+                components_configuration = #{componentsConfiguration},
+            </if>
+            <if test="compressedBitsPerPixel != null and compressedBitsPerPixel.trim() != ''">
+                compressed_bits_per_pixel = #{compressedBitsPerPixel},
+            </if>
+            <if test="colorSpace != null and colorSpace.trim() != ''">
+                color_space = #{colorSpace},
+            </if>
+            <if test="compression != null and compression.trim() != ''">
+                compression = #{compression},
+            </if>
+            <if test="exifVersion != null and exifVersion.trim() != ''">
+                exif_version = #{exifVersion},
+            </if>
+            <if test="shutterSpeed != null and shutterSpeed.trim() != ''">
+                shutter_speed = #{shutterSpeed},
+            </if>
+            <if test="isoSpeedRatings != null">
+                iso_speed_ratings = #{isoSpeedRatings},
+            </if>
+            <if test="exposureTime != null and exposureTime.trim() != ''">
+                exposure_time = #{exposureTime},
+            </if>
+            <if test="exposureMode != null and exposureMode.trim() != ''">
+                exposure_mode = #{exposureMode},
+            </if>
+            <if test="exposureBiasValue != null and exposureBiasValue.trim() != ''">
+                exposure_bias_value = #{exposureBiasValue},
+            </if>
+            <if test="fNumber != null">
+                f_number = #{fNumber},
+            </if>
+            <if test="maxApertureValue != null and maxApertureValue.trim() != ''">
+                max_aperture_value = #{maxApertureValue},
+            </if>
+            <if test="meteringMode != null and meteringMode.trim() != ''">
+                metering_mode = #{meteringMode},
+            </if>
+            <if test="lightSource != null and lightSource.trim() != ''">
+                light_source = #{lightSource},
+            </if>
+            <if test="brightness != null">
+                brightness = #{brightness},
+            </if>
+            <if test="whiteBalance != null and whiteBalance.trim() != ''">
+                white_balance = #{whiteBalance},
+            </if>
+            <if test="focalLength != null and focalLength.trim() != ''">
+                focal_length = #{focalLength},
+            </if>
+            <if test="focalLength35 != null and focalLength35.trim() != ''">
+                focal_length35 = #{focalLength35},
+            </if>
+            <if test="flash != null and flash.trim() != ''">
+                flash = #{flash},
+            </if>
+            <if test="flashValue != null">
+                flash_value = #{flashValue},
+            </if>
+            <if test="flashPixVersion != null and flashPixVersion.trim() != ''">
+                flash_pix_version = #{flashPixVersion},
+            </if>
+            <if test="sceneCaptureType != null and sceneCaptureType.trim() != ''">
+                scene_capture_type = #{sceneCaptureType},
+            </if>
+            <if test="lensMake != null and lensMake.trim() != ''">
+                lens_make = #{lensMake},
+            </if>
+            <if test="lensModel != null and lensModel.trim() != ''">
+                lens_model = #{lensModel},
+            </if>
+            <if test="dateTimeOriginal != null">
+                date_time_original = #{dateTimeOriginal},
+            </if>
+            <if test="subsecTimeOriginal != null">
+                subsec_time_original = #{subsecTimeOriginal},
+            </if>
+            <if test="dateTimeDigitized != null">
+                date_time_digitized = #{dateTimeDigitized},
+            </if>
+            <if test="subsecTimeDigitized != null">
+                subsec_time_digitized = #{subsecTimeDigitized},
+            </if>
+            <if test="createdBy != null">
+                created_by = #{createdBy}
+            </if>
+        </set>
         WHERE img_camera_info_id = #{imgCameraInfoId}
 
     </update>

@@ -68,6 +68,10 @@ public class ImgCameraInfo {
     private Integer SubsecTimeOriginal;     //拍摄时间 微秒数
     private Timestamp dateTimeDigitized;    //数字化时间
     private Integer SubsecTimeDigitized;    //数字化时间 微秒数
+
+    private Long createdBy;
+    private Timestamp createdTime;
+    private Timestamp updatedTime;
     //不入数据库
     private Integer width;     //图像宽度
     private Integer length;    //图像高度
@@ -118,8 +122,10 @@ public class ImgCameraInfo {
         this.setDateTimeOriginal(convertStringToTimestamp(metadata.get("Exif SubIFD:Date/Time Original")));
         this.setDateTimeDigitized(convertStringToTimestamp(metadata.get("Exif SubIFD:Date/Time Digitized")));
 
-//        this.setWidth(parseInt(metadata.get("tiff:ImageWidth")));
-//        this.setLength(parseInt(metadata.get("tiff:ImageLength")));
+        if (metadata.get("tiff:ImageWidth") != null)
+            this.setWidth(Integer.valueOf(metadata.get("tiff:ImageWidth")));
+        if (metadata.get("tiff:ImageLength") != null)
+            this.setLength(parseInt(metadata.get("tiff:ImageLength")));
         return this;
     }
 
