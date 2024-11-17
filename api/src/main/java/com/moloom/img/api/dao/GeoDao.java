@@ -48,7 +48,6 @@ public interface GeoDao {
      * @date 2024-11-17 22:53:46
      * @description select a record in Geo
      */
-    @Select("SELECT * FROM geo WHERE geo_id = #{id}")
     public Geo selectOneById(Long id);
 
 }

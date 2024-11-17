@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.moloom.img.api.dao.GeoDao">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="imgCameraInfoId"
+            parameterType="com.moloom.img.api.entity.Geo">
+        INSERT INTO geo (location,
+                         altitude,
+                         altitude_ref,
+                         gps_speed,
+                         gps_speed_ref,
+                         img_info_id,
+                         created_by,
+                         created_time,
+                         updated_time)
+        VALUES (ST_PointFromText(CONCAT('POINT(', #{longitude}, ' ', #{latitude}, ')')),
+                #{altitude},
+                #{altitudeRef},
+                #{gpsSpeed},
+                #{gpsSpeedRef},
+                #{imgInfoId},
+                #{createdBy},
+                #{createdTime},
+                #{updatedTime})
+    </insert>
+
+    <update id="update" parameterType="com.moloom.img.api.entity.Geo">
+        UPDATE geo
+        <set>
+            <if test="longitude != null and latitude != null">
+                location = ST_PointFromText(CONCAT('POINT(', #{longitude}, ' ', #{latitude}, ')')),
+            </if>
+            <if test="altitude != null">
+                altitude = #{altitude},
+            </if>
+            <if test="altitudeRef != null and altitudeRef != ''">
+                altitude_ref = #{altitudeRef},
+            </if>
+            <if test="gpsSpeed != null and gpsSpeed != ''">
+                gps_speed = #{gpsSpeed},
+            </if>
+            <if test="gpsSpeedRef != null and gpsSpeedRef != ''">
+                gps_speed_ref = #{gpsSpeedRef},
+            </if>
+            <if test="imgInfoId != null">
+                img_info_id = #{imgInfoId},
+            </if>
+            <if test="updatedTime != null">
+                updated_time = #{updatedTime}
+            </if>
+        </set>
+        WHERE geo_id = #{geoId}
+    </update>
+
+    <select id="selectOneById" parameterType="java.lang.Long"
+            resultType="com.moloom.img.api.entity.Geo">
+        SELECT geo_id,
+               ST_X(location) AS longitude,
+               ST_Y(location) AS latitude,
+               altitude,
+               altitude_ref,
+               gps_speed,
+               gps_speed_ref,
+               img_info_id,
+               created_by,
+               created_time,
+               updated_time
+        FROM geo
+        WHERE geo_id = #{id}
+    </select>
+
+</mapper>
