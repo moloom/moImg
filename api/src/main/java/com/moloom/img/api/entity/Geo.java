@@ -35,9 +35,12 @@ public class Geo {
         if (metadata.get("GPS:GPS Latitude") != null && !metadata.get("GPS:GPS Latitude").isEmpty())
             this.setLatitude(pointToCoordinate(metadata.get("GPS:GPS Latitude")));
         //GPS:GPS Altitude的值为 0 m，需要去掉单位
-        if (metadata.get("GPS:GPS Altitude") != null && !metadata.get("GPS:GPS Altitude").isEmpty())
-            this.setAltitude(Double.valueOf(metadata.get("GPS:GPS Altitude").substring(0, metadata.get("GPS:GPS Altitude").indexOf(' '))));
-        this.setAltitudeRef(metadata.get("GPS:GPS Altitude Ref"));
+        if (metadata.get("GPS:GPS Altitude") != null && !metadata.get("GPS:GPS Altitude").isEmpty()) {
+            int index = metadata.get("GPS:GPS Altitude").indexOf(' ');
+            this.setAltitude(Double.valueOf(metadata.get("GPS:GPS Altitude").substring(0, index)));
+            this.setAltitudeRef(metadata.get("GPS:GPS Altitude").substring(index));
+        }
+
         //GPS:GPS Speed的值为 0 km/h，需要去掉单位
         if (metadata.get("GPS:GPS Speed") != null && !metadata.get("GPS:GPS Speed").isEmpty())
             this.setGpsSpeed(Float.valueOf(metadata.get("GPS:GPS Speed").substring(0, metadata.get("GPS:GPS Speed").indexOf(' '))));
@@ -47,10 +50,16 @@ public class Geo {
 
     // 将度分秒坐标转换为十进制坐标
     public static Double pointToCoordinate(String point) {
-        Double du = Double.parseDouble(point.substring(0, point.indexOf("°")).trim());
-        Double fen = Double.parseDouble(point.substring(point.indexOf("°") + 1, point.indexOf("‘")).trim());
-        Double miao = Double.parseDouble(point.substring(point.indexOf("‘") + 1, point.indexOf("\"")).trim());
-        Double coordinator = du + fen / 60 + miao / 60 / 60;
+        if (point == null || point.isEmpty())
+            return null;
+        System.out.println("\n\n" + point + "\n");
+        int degreeIndex = point.indexOf("°");
+        int minuteIndex = point.indexOf("'");
+        int secondIndex = point.indexOf("\"");
+        Double degree = Double.parseDouble(point.substring(0, degreeIndex));
+        Double minute = Double.parseDouble(point.substring(degreeIndex + 1, minuteIndex));
+        Double second = Double.parseDouble(point.substring(minuteIndex + 1, secondIndex));
+        Double coordinator = degree + minute / 60 + second / 60 / 60;
         return coordinator;
     }
 }
