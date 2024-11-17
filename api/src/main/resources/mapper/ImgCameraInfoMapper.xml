@@ -40,6 +40,7 @@
                                      scene_capture_type,
                                      lens_make,
                                      lens_model,
+                                     lens_specification,
                                      date_time_original,
                                      subsec_time_original,
                                      date_time_digitized,
@@ -77,6 +78,7 @@
                 #{sceneCaptureType},
                 #{lensMake},
                 #{lensModel},
+                #{lensSpecification},
                 #{dateTimeOriginal},
                 #{subsecTimeOriginal},
                 #{dateTimeDigitized},
@@ -186,6 +188,9 @@
             </if>
             <if test="lensModel != null and lensModel.trim() != ''">
                 lens_model = #{lensModel},
+            </if>
+            <if test="lensSpecification != null and lensSpecification.trim() != ''">
+                lens_specification = #{lensSpecification},
             </if>
             <if test="dateTimeOriginal != null">
                 date_time_original = #{dateTimeOriginal},

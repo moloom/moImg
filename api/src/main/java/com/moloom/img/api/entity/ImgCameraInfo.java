@@ -55,10 +55,11 @@ public class ImgCameraInfo {
     private String sceneCaptureType;    //拍摄类型
     private String LensMake;        //镜头生产厂商
     private String LensModel;       //镜头型号
+    private String lensSpecification;   //镜头焦距信息
     private Timestamp dateTimeOriginal;     //拍摄时间
-    private Integer SubsecTimeOriginal;     //拍摄时间 微秒数
+    private Integer subsecTimeOriginal;     //拍摄时间 微秒数
     private Timestamp dateTimeDigitized;    //数字化时间
-    private Integer SubsecTimeDigitized;    //数字化时间 微秒数
+    private Integer subsecTimeDigitized;    //数字化时间 微秒数
 
     private Long createdBy;
     private Timestamp createdTime;
@@ -73,7 +74,10 @@ public class ImgCameraInfo {
         this.setImageDescription(metadata.get("Exif IFD0:Image Description"));
         this.setMake(metadata.get("tiff:Make"));
         this.setModel(metadata.get("Exif IFD0:Model"));
-        this.setSoftware(metadata.get("Firmware Version"));
+        if (metadata.get("Version") != null)
+            this.setSoftware(metadata.get("Version"));
+        else if (metadata.get("Firmware Version") != null)
+            this.setSoftware(metadata.get("Firmware Version"));
         this.setOrientation(metadata.get("tiff:Orientation"));
         if (metadata.get("tiff:XResolution") != null)
             this.setXResolution(Double.valueOf(metadata.get("tiff:XResolution")));
@@ -92,7 +96,7 @@ public class ImgCameraInfo {
             this.setIsoSpeedRatings(Integer.valueOf(metadata.get("exif:IsoSpeedRatings")));
         this.setExposureTime(metadata.get("Exif SubIFD:Exposure Time"));
         this.setExposureMode(metadata.get("Exif SubIFD:Exposure Mode"));
-        this.setExposureBiasValue(metadata.get("Exif SubIFD:Exposure Bias Value:"));
+        this.setExposureBiasValue(metadata.get("Exif SubIFD:Exposure Bias Value"));
         if (metadata.get("exif:FNumber") != null)
             this.setFNumber(Float.valueOf(metadata.get("exif:FNumber")));
         this.setMaxApertureValue(metadata.get("Exif SubIFD:Aperture Value"));
@@ -110,8 +114,11 @@ public class ImgCameraInfo {
         this.setSceneCaptureType(metadata.get("Exif SubIFD:Scene Capture Type"));
         this.setLensMake(metadata.get("Exif SubIFD:Lens Make"));
         this.setLensModel(metadata.get("Exif SubIFD:Lens Model"));
+        this.setLensSpecification(metadata.get("Exif SubIFD:Lens Specification"));
         this.setDateTimeOriginal(convertStringToTimestamp(metadata.get("Exif SubIFD:Date/Time Original")));
+        this.setSubsecTimeOriginal(Integer.valueOf(metadata.get("Exif SubIFD:Sub-Sec Time Original")));
         this.setDateTimeDigitized(convertStringToTimestamp(metadata.get("Exif SubIFD:Date/Time Digitized")));
+        this.setSubsecTimeDigitized(Integer.valueOf(metadata.get("Exif SubIFD:Sub-Sec Time Digitized")));
 
         if (metadata.get("tiff:ImageWidth") != null)
             this.setWidth(Integer.valueOf(metadata.get("tiff:ImageWidth")));
