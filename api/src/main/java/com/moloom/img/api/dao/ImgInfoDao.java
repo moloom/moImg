@@ -60,5 +60,5 @@ public interface ImgInfoDao {
      * @description search databases by img_url for check img_url is existed or not
      */
     @Select("SELECT img_id FROM img_info WHERE img_url = #{imgUrl}")
-    public Long imgExistById(String imgUrl);
+    public long imgExistById(String imgUrl);
 }
