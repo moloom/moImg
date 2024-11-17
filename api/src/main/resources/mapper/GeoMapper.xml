@@ -38,7 +38,7 @@
             <if test="altitudeRef != null and altitudeRef != ''">
                 altitude_ref = #{altitudeRef},
             </if>
-            <if test="gpsSpeed != null and gpsSpeed != ''">
+            <if test="gpsSpeed != null">
                 gps_speed = #{gpsSpeed},
             </if>
             <if test="gpsSpeedRef != null and gpsSpeedRef != ''">
