@@ -24,8 +24,8 @@ public class ImgInfo {
     private String extension;
     private String contentType;
     private String token;
-    private Long width;
-    private Long length;
+    private Integer width;
+    private Integer length;
     private ImgCategory imgCategory;
     private String imgCameraInfoId;
     private Float latitude;
