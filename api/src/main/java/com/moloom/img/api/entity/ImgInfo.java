@@ -27,10 +27,8 @@ public class ImgInfo {
     private Integer width;
     private Integer length;
     private ImgCategory imgCategory;
-    private String imgCameraInfoId;
-    private Float latitude;
-    private Float longitude;
-    private Float altitude;
+    private Long imgCameraInfoId;
+    private Long geoId;
     private Timestamp originalCreatedTime;
     private Timestamp originalUpdatedTime;
     private Long viewCount;
