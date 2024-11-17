@@ -17,9 +17,7 @@
                              length,
                              img_category,
                              img_camera_info_id,
-                             latitude,
-                             longitude,
-                             altitude,
+                             geoId,
                              original_created_time,
                              original_updated_time,
                              created_by,
@@ -36,9 +34,7 @@
                 #{length},
                 #{imgCategory},
                 #{imgCameraInfoId},
-                #{latitude},
-                #{longitude},
-                #{altitude},
+                #{geoId},
                 #{originalCreatedTime},
                 #{originalUpdatedTime},
                 #{createdBy},
@@ -81,17 +77,11 @@
             <if test="imgCategory != null">
                 img_category = #{imgCategory},
             </if>
-            <if test="cameraInfo != null and cameraInfo != ''">
+            <if test="cameraInfo != null">
                 img_camera_info_id = #{imgCameraInfoId},
             </if>
-            <if test="latitude != null">
-                latitude = #{latitude},
-            </if>
-            <if test="longitude != null">
-                longitude = #{longitude},
-            </if>
-            <if test="altitude != null">
-                altitude = #{altitude},
+            <if test="geoId != null">
+                geoId = #{geoId},
             </if>
             <if test="originalCreatedTime != null">
                 original_created_time = #{originalCreatedTime},
