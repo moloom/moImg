@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.moloom.img.api.dao.TokensDao">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="tokenId"
+            parameterType="com.moloom.img.api.entity.Tokens">
+        INSERT INTO geo (token,
+                         userId,
+                         status)
+        VALUES (#{token},
+                #{user_id},
+                #{status})
+    </insert>
+
+    <update id="update" parameterType="com.moloom.img.api.entity.Tokens">
+        UPDATE tokens
+        <set>
+            <if test="token != null and token != ''">
+                token = #{token},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        WHERE geo_id = #{geoId}
+    </update>
+
+</mapper>
