@@ -6,12 +6,12 @@
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="tokenId"
             parameterType="com.moloom.img.api.entity.Tokens">
-        INSERT INTO geo (token,
-                         userId,
-                         status)
+        INSERT INTO tokens (token,
+                         status,
+                         created_by)
         VALUES (#{token},
-                #{user_id},
-                #{status})
+                #{status},
+                #{createdBy})
     </insert>
 
     <update id="update" parameterType="com.moloom.img.api.entity.Tokens">
@@ -20,14 +20,14 @@
             <if test="token != null and token != ''">
                 token = #{token},
             </if>
-            <if test="userId != null">
-                user_id = #{userId},
-            </if>
             <if test="status != null">
                 status = #{status},
             </if>
+            <if test="createdBy != null">
+                created_by = #{createdBy},
+            </if>
         </set>
-        WHERE geo_id = #{geoId}
+        WHERE token_id = #{tokenId}
     </update>
 
 </mapper>
