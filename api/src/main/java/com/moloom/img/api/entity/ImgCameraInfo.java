@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.tika.metadata.Metadata;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -68,8 +69,16 @@ public class ImgCameraInfo {
     private Integer width;     //图像宽度
     private Integer length;    //图像高度
 
-    // 静态方法：将 Metadata 信息映射到 ImgCameraInfo 对象
+    /**
+     * @param metadata 提取的图像信息对象
+     * @return
+     * @author moloom
+     * @date 2024-11-17 23:04:00
+     * @description 从 Metadata 对象提取信息
+     */
     public ImgCameraInfo fromMetadata(Metadata metadata) {
+        if (metadata == null)
+            return null;
 
         this.setImageDescription(metadata.get("Exif IFD0:Image Description"));
         this.setMake(metadata.get("tiff:Make"));
@@ -127,19 +136,35 @@ public class ImgCameraInfo {
         return this;
     }
 
-    // 如果字符串格式不同，先解析为 Date，再转为 Timestamp
+    /**
+     * @param str     to be parsed
+     * @param pattern format pattern of str
+     * @return Timestamp
+     * @author moloom
+     * @date 2024-11-18 21:07:13
+     * @description Convert string to Timestamp by custom pattern
+     */
+    @Nullable
     public static Timestamp convertStringToTimestamp(String str, String pattern) {
+        if (str == null || str.isBlank() || pattern == null || pattern.isBlank()) return null;
         try {
-            if (str == null || str.isEmpty()) return null;
             SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
             Date parsedDate = dateFormat.parse(str);
             return new Timestamp(parsedDate.getTime());
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("parsing String to TimeStamp error");
         }
     }
 
     // 如果字符串已经是 "yyyy:MM:dd HH:mm:ss" 格式
+
+    /**
+     * @param str to be parsed
+     * @return Timestamp
+     * @author moloom
+     * @date 2024-11-18 21:13:22
+     * @description Convert string format is 'yyyy:MM:dd HH:mm:ss' to Timestamp
+     */
     public static Timestamp convertStringToTimestamp(String str) {
         return convertStringToTimestamp(str, "yyyy:MM:dd HH:mm:ss");
     }
