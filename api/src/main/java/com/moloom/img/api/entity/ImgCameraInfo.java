@@ -1,7 +1,9 @@
 package com.moloom.img.api.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.apache.tika.metadata.Metadata;
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +20,8 @@ import java.util.Date;
  */
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Accessors(chain = true)
 @Builder
 public class ImgCameraInfo {

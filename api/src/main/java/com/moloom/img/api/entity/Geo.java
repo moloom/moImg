@@ -1,7 +1,9 @@
 package com.moloom.img.api.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.apache.tika.metadata.Metadata;
 
@@ -13,6 +15,8 @@ import java.sql.Timestamp;
  * @description: 地理位置信息
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Accessors(chain = true)
 @Builder
 public class Geo {

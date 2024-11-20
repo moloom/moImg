@@ -1,7 +1,9 @@
 package com.moloom.img.api.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.sql.Timestamp;
@@ -12,6 +14,8 @@ import java.sql.Timestamp;
  * @description: img info pojo
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Accessors(chain = true)
 public class ImgInfo {

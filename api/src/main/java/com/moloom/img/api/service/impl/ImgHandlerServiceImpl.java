@@ -1,7 +1,9 @@
 package com.moloom.img.api.service.impl;
 
 import com.moloom.img.api.config.BucketConfig;
+import com.moloom.img.api.dao.ImgCameraInfoDao;
 import com.moloom.img.api.dao.ImgInfoDao;
+import com.moloom.img.api.entity.ImgCameraInfo;
 import com.moloom.img.api.entity.ImgCategory;
 import com.moloom.img.api.entity.ImgInfo;
 import com.moloom.img.api.service.ImgHandlerService;
@@ -50,6 +52,9 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
     @Resource
     private ImgInfoDao imgInfoDao;
 
+    @Resource
+    private ImgCameraInfoDao imgCameraInfoDao;
+
     @Value("${moimg.upload.upload-root-path}")
     private String prePath;
 
@@ -77,20 +82,6 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
          *
          */
         // 提取元信息，和存储双线程处理
-        /*try (InputStream inputStream = fileUploadVo.getMultipartFile().getInputStream()) {
-            Metadata metadata = new Metadata();
-            BodyContentHandler handler = new BodyContentHandler();
-            // 使用 Tika 处理输入流
-            Tika tika = new Tika();
-            tika.parse(inputStream, metadata);
-
-            // 获取元信息
-            String cameraModel = metadata.get("Exif.Image.Model");
-            String dateTimeOriginal = metadata.get("Exif.Image.DateTimeOriginal");
-            // 处理和存储元信息
-        } catch (Exception e) {
-            // 处理异常
-        }*/
 
         //确保bucket存在
         boolean bucketExists = minioService.checkBucketExist(imgBucket.getBucketName());
@@ -131,29 +122,40 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         fileUploadVo.setFileStoragePath(imgStoragePath.toString());
 
         log.info("file info ::{}", fileUploadVo.toString());
-        //存储img到minIO，异步处理(X)
+        //--------------------------------存储img到minIO，异步处理(X)-------------------------------------
         ObjectWriteResponse response = minioService.putObject(fileUploadVo);
         log.info("ObjectWriteResponse::{}\n={}\n={}\n={}\n={}", response.etag(), response.bucket(), response.versionId(), response.object(), response.headers());
-
-        //获取img元数据，保存到数据库，异步处理(X)
+        //--------------------------------获取img元数据，保存到数据库，异步处理(X)-------------------------------------
+        //初始化解析元数据要用到的对象
+        Metadata metadata = new Metadata();
+        Parser parser = new AutoDetectParser();
+        BodyContentHandler handler = new BodyContentHandler();
+        ParseContext context = new ParseContext();
         try {
-            Parser parser = new AutoDetectParser();
-            BodyContentHandler handler = new BodyContentHandler();
-            Metadata metadata = new Metadata();
-            ParseContext context = new ParseContext();
-
+            // 解析图片的元数据，数据在 Metadata 对象中
             parser.parse(fileUploadVo.getMultipartFile().getInputStream(), handler, metadata, context);
-            log.info("元信息获取::{}", handler.toString());
-            //getting the list of all metadata elements
-            String[] metadataNames = metadata.names();
-            log.info("\n\n");
-            for (String name : metadataNames) {
-                log.info("{}==={}", name, metadata.get(name));
-            }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("parse the images error");
         }
+        log.info("元信息获取::{}", handler.toString());
+        //getting the list of all metadata elements
+        String[] metadataNames = metadata.names();
+        log.info("\n\n");
+            /*for (String name : metadataNames) {
+                log.info("{}==={}", name, metadata.get(name));
+            }*/
 
+        //摄像头元信息插入到数据库
+
+        //还有很多值像createdBy等都没插入进去!!!!!!!!!!!!!!!!!!!!!
+        ImgCameraInfo imgCameraInfo = ImgCameraInfo.builder().build().fromMetadata(metadata);
+        log.info(imgCameraInfo.toString());
+        int flag = imgCameraInfoDao.insert(imgCameraInfo);
+        if (flag > 0)
+            log.info("imgCameraInfo插入成功");
+        else
+            log.info("imgCameraInfo插入失败");
+        //插入图片信息到数据库
         ImgInfo img = ImgInfo.builder()
                 .imgUrl(StringGenerator.getURL())
                 .originalFullName(fileUploadVo.getFileName() + fileUploadVo.getFileExtension())
@@ -164,13 +166,11 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
                 .contentType(fileUploadVo.getContentType())
                 .token(fileUploadVo.getToken())
                 .imgCategory(ImgCategory.SOURCE)
-
+                .width(imgCameraInfo.getWidth())
                 .build();
-        int imgAffected = imgInfoDao.insertImgInfo(img);
+        int imgAffected = imgInfoDao.insert(img);
 
         return R.success().setData(img.getImgUrl());
-
-
     }
 
     @Override
