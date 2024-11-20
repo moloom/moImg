@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 /**
  * @author: moloom
  * @date: 2024-10-20 04:47
- * @description: api返回类：status: 0表示成功，其他表示失败；msg: 提示信息，data: 数据。
+ * @description: api返回类：status: 状态码；msg: 提示信息，data: 数据。
  * HashMap类会颠倒key的顺序，所以这里使用LinkedHashMap
  */
 public class R<T> extends LinkedHashMap<String, Object> {
