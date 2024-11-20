@@ -7,19 +7,14 @@ import java.util.LinkedHashMap;
 /**
  * @author: moloom
  * @date: 2024-10-20 04:47
- * @description: api返回类：code: 0表示成功，其他表示失败；msg: 提示信息，data: 数据。
+ * @description: api返回类：status: 0表示成功，其他表示失败；msg: 提示信息，data: 数据。
  * HashMap类会颠倒key的顺序，所以这里使用LinkedHashMap
  */
 public class R<T> extends LinkedHashMap<String, Object> {
     private static final long serialVersionUID = 1L;
 
-    public R() {
-        put("code", 0);
-        put("msg", "success");
-    }
-
-    public R(int code, String msg) {
-        put("code", code);
+    private R(int status, String msg) {
+        put("status", status);
         put("msg", msg);
     }
 
@@ -28,13 +23,18 @@ public class R<T> extends LinkedHashMap<String, Object> {
         return this;
     }
 
-    public Integer getCode() {
-        return (Integer) this.get("code");
+    public Integer getStatus() {
+        return (Integer) this.get("status");
     }
 
     public R setData(Object data) {
         put("data", data);
         return this;
+    }
+
+    // 只能私有，外部不能new
+    private static R r(int status, String msg) {
+        return new R(status, msg);
     }
 
     /**
@@ -45,39 +45,39 @@ public class R<T> extends LinkedHashMap<String, Object> {
      * @description 默认错误，500, 服务内部错误
      */
     public static R error() {
-        return error(500, "service internal error");
-    }
-
-    public static R error(HttpStatus status) {
-        return error(status.value(), status.getReasonPhrase());
-    }
-
-    public static R error(HttpStatus status, String msg) {
-        return error(status.value(), msg);
+        return error(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     public static R error(String msg) {
-        return error(1, msg);
+        return error(HttpStatus.INTERNAL_SERVER_ERROR, msg);
     }
 
-    public static R error(int code, String msg) {
-        return new R(code, msg);
+    public static R error(HttpStatus status) {
+        return error(status, status.getReasonPhrase());
+    }
+
+    public static R error(HttpStatus status, String msg) {
+        return r(status.value(), msg);
     }
 
     public static R success() {
-        return new R();
+        return success(HttpStatus.OK);
     }
 
     public static R success(String msg) {
-        return new R().put("msg", msg);
+        return success().put("msg", msg);
     }
 
     public static R success(String msg, Object data) {
-        return success(msg).put("data", data);
+        return success(msg).setData(data);
     }
 
     public static R success(Object data) {
-        return new R().put("data", data);
+        return success().setData(data);
+    }
+
+    public static R success(HttpStatus status, String msg) {
+        return r(status.value(), msg);
     }
 
 }
