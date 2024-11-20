@@ -29,6 +29,13 @@ public class StringGenerator {
         return generateString(URL_LENGTH);
     }
 
+    /**
+     * @param length String length
+     * @return String
+     * @author moloom
+     * @date 2024-10-14 05:28:21
+     * @description generate random string
+     */
     public static String generateString(int length) {
         //StringBuilder 比 StringBuffer 几乎快一倍
         StringBuilder string = new StringBuilder();
@@ -39,5 +46,23 @@ public class StringGenerator {
             string.append(CHARACTERS.charAt(randomIndex));
         }
         return string.toString();
+    }
+
+    /**
+     * @param token
+     * @return true is valid or false
+     * @author moloom
+     * @date 2024-11-20 21:10:28
+     * @description check token is valid
+     */
+    public static boolean validateToken(String token) {
+        if (token == null || token.isEmpty())
+            return false;
+
+        // 正则匹配 TOKEN_LENGTH 位纯字母和数字
+        if (!token.matches("^[a-zA-Z0-9]{" + TOKEN_LENGTH + "}$"))
+            return false;
+
+        return true;
     }
 }
