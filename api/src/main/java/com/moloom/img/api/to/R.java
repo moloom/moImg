@@ -65,15 +65,15 @@ public class R<T> extends LinkedHashMap<String, Object> {
     }
 
     public static R success(String msg) {
-        return success().put("msg", msg);
+        return success(HttpStatus.OK, msg);
     }
 
     public static R success(String msg, Object data) {
         return success(msg).setData(data);
     }
 
-    public static R success(Object data) {
-        return success().setData(data);
+    public static R success(HttpStatus status) {
+        return success(status, status.getReasonPhrase());
     }
 
     public static R success(HttpStatus status, String msg) {
