@@ -1,5 +1,7 @@
 package com.moloom.img.api.to;
 
+import org.springframework.http.HttpStatus;
+
 import java.util.LinkedHashMap;
 
 /**
@@ -44,6 +46,14 @@ public class R<T> extends LinkedHashMap<String, Object> {
      */
     public static R error() {
         return error(500, "service internal error");
+    }
+
+    public static R error(HttpStatus status) {
+        return error(status.value(), status.getReasonPhrase());
+    }
+
+    public static R error(HttpStatus status, String msg) {
+        return error(status.value(), msg);
     }
 
     public static R error(String msg) {
