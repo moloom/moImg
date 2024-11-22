@@ -2,7 +2,7 @@ package com.moloom.img.api.service.impl;
 
 import com.moloom.img.api.service.MinioService;
 import com.moloom.img.api.to.Buckets;
-import com.moloom.img.api.to.DownloadTO;
+import com.moloom.img.api.to.DownloadVO;
 import com.moloom.img.api.vo.FileUploadVo;
 import io.minio.*;
 import jakarta.annotation.Resource;
@@ -77,15 +77,15 @@ public class MinioServiceImpl implements MinioService {
     }
 
     @Override
-    public ObjectWriteResponse putObject(FileUploadVo fileUploadVo) {
+    public ObjectWriteResponse putObject(FileUploadVo vo) {
         try {
             ObjectWriteResponse response = minioClient.putObject(
                     PutObjectArgs
                             .builder()
-                            .bucket(fileUploadVo.getBucketName())
-                            .stream(fileUploadVo.getMultipartFile().getInputStream(), fileUploadVo.getMultipartFile().getSize(), -1)
-                            .contentType(fileUploadVo.getContentType())
-                            .object(fileUploadVo.getFileStoragePath())
+                            .bucket(vo.getBucketName())
+                            .stream(vo.getMultipartFile().getInputStream(), vo.getMultipartFile().getSize(), -1)
+                            .contentType(vo.getContentType())
+                            .object(vo.getFileStoragePath())
                             .build());
             return response;
         } catch (Exception e) {
@@ -95,12 +95,12 @@ public class MinioServiceImpl implements MinioService {
     }
 
     @Override
-    public InputStream getObject(DownloadTO downloadTO) {
+    public InputStream getObject(DownloadVO vo) {
         try {
             InputStream stream = minioClient.getObject(
                     GetObjectArgs.builder()
-                            .bucket(downloadTO.getBucketName())
-                            .object(downloadTO.getStoragePath())
+                            .bucket(vo.getBucketName())
+                            .object(vo.getStoragePath())
                             .build());
             return stream;
         } catch (Exception e) {

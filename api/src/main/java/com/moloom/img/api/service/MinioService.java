@@ -2,15 +2,11 @@ package com.moloom.img.api.service;
 
 
 import com.moloom.img.api.to.Buckets;
-import com.moloom.img.api.to.DownloadTO;
+import com.moloom.img.api.to.DownloadVO;
 import com.moloom.img.api.vo.FileUploadVo;
 import io.minio.ObjectWriteResponse;
-import io.minio.errors.*;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 /**
@@ -54,7 +50,7 @@ public interface MinioService {
      * @date 2024-10-31 01:30:22
      * @description Uploads given stream as object in bucket.
      */
-    public ObjectWriteResponse putObject(FileUploadVo fileUploadVo);
+    public ObjectWriteResponse putObject(FileUploadVo vo);
 
     /**
      * @param downloadTO
@@ -63,5 +59,5 @@ public interface MinioService {
      * @date 2024-10-31 01:35:09
      * @description Gets data of an object.
      */
-    public InputStream getObject(DownloadTO downloadTO);
+    public InputStream getObject(DownloadVO downloadTO);
 }
