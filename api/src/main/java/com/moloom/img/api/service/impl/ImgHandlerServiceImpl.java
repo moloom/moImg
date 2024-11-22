@@ -8,7 +8,7 @@ import com.moloom.img.api.entity.ImgCategory;
 import com.moloom.img.api.entity.ImgInfo;
 import com.moloom.img.api.service.ImgHandlerService;
 import com.moloom.img.api.to.Buckets;
-import com.moloom.img.api.to.DownloadTO;
+import com.moloom.img.api.to.DownloadVO;
 import com.moloom.img.api.to.R;
 import com.moloom.img.api.utils.StringGenerator;
 import com.moloom.img.api.vo.FileUploadVo;
@@ -187,18 +187,18 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
     }
 
     @Override
-    public ResponseEntity<InputStreamResource> download(DownloadTO downloadTO) {
+    public ResponseEntity<InputStreamResource> download(DownloadVO vo) {
         //判断img是否存在
-        long imgId = imgInfoDao.imgExistById(downloadTO.getUrl());
+        long imgId = imgInfoDao.imgExistById(vo.getUrl());
         if (imgId == 0)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         ImgInfo imgInfo = imgInfoDao.selectOneById(imgId);
-        downloadTO.setStoragePath(imgInfo.getStoragePath());
+        vo.setStoragePath(imgInfo.getStoragePath());
 
         //设置bucket
-        downloadTO.setBucketName(imgBucket.getBucketName());
+        vo.setBucketName(imgBucket.getBucketName());
         //获取文件流
-        InputStreamResource inputStream = new InputStreamResource(minioService.getObject(downloadTO));
+        InputStreamResource inputStream = new InputStreamResource(minioService.getObject(vo));
 
 
         HttpHeaders headers = new HttpHeaders();

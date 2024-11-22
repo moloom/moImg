@@ -1,13 +1,11 @@
 package com.moloom.img.api.service;
 
 import com.moloom.img.api.entity.ImgInfo;
-import com.moloom.img.api.to.DownloadTO;
+import com.moloom.img.api.to.DownloadVO;
 import com.moloom.img.api.to.R;
 import com.moloom.img.api.vo.FileUploadVo;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
-
-import java.io.IOException;
 
 /**
  * @author: moloom
@@ -42,7 +40,7 @@ public interface ImgHandlerService {
      * @return
      * @description 从服务器返回文件
      */
-    public ResponseEntity<InputStreamResource> download(DownloadTO downloadTO);
+    public ResponseEntity<InputStreamResource> download(DownloadVO vo);
 
 
 }

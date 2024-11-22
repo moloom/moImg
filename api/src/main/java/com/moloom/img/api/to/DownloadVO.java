@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @Builder
-public class DownloadTO {
+public class DownloadVO {
     private String url;
     private String extension;
     private String bucketName;
