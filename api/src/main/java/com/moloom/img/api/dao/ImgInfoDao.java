@@ -20,7 +20,7 @@ public interface ImgInfoDao {
      * @date 2024-11-01 00:41:12
      * @description insert a row data
      */
-    public int insert(ImgInfo imgInfo);
+    int insert(ImgInfo imgInfo);
 
     /**
      * @param imgInfo 值不为空的才会修改进数据库
@@ -29,7 +29,7 @@ public interface ImgInfoDao {
      * @date 2024-11-01 00:54:42
      * @description update data,only update not null and not empty fields!
      */
-    public int update(ImgInfo imgInfo);
+    int update(ImgInfo imgInfo);
 
 
     /**
@@ -40,7 +40,7 @@ public interface ImgInfoDao {
      * @description delete a record by img_id
      */
     @Delete("DELETE FROM img_info WHERE img_id = #{imgId}")
-    public int deleteById(Long imgId);
+    int deleteById(Long imgId);
 
     /**
      * @param imgId
@@ -50,7 +50,7 @@ public interface ImgInfoDao {
      * @description
      */
     @Select("SELECT * FROM img_info WHERE img_id = #{imgId}")
-    public ImgInfo selectOneById(Long imgId);
+    ImgInfo selectOneById(Long imgId);
 
     /**
      * @param imgUrl
@@ -60,5 +60,5 @@ public interface ImgInfoDao {
      * @description search databases by img_url for check img_url is existed or not
      */
     @Select("SELECT img_id FROM img_info WHERE img_url = #{imgUrl}")
-    public long imgExistById(String imgUrl);
+    Long imgExistByUrl(String imgUrl);
 }
