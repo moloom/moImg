@@ -24,13 +24,17 @@ import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.io.InputStream;
+import java.lang.reflect.Array;
+import java.nio.charset.Charset;
+import java.time.Duration;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -64,6 +68,10 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
     //存储图片的bucket名称
     private Buckets imgBucket;
 
+    //redis中imgInfo的key前缀
+    //imgInfo 有效期 10 天
+    private static final String IMG_PREFIX_OF_REDIS = "imgInfo:all:";
+
 
     @PostConstruct
     public void initImgBucket() {
@@ -73,6 +81,23 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         }
         //获取存储图片的bucket 名称，规定了，第一个是存图片的
         imgBucket = bucketConfig.getBuckets().get(0);
+    }
+
+    /**
+     * @param
+     * @return
+     * @author moloom
+     * @date 2024-11-23 16:32:03
+     * @description preload ImgInfo to redis
+     */
+    @PostConstruct
+    public void preloadImgInfoToRedis() {
+        // 从数据库拉取所有数据
+        List<ImgInfo> imgInfos = imgInfoDao.getAllImgInfos();
+        imgInfos.forEach(imgInfo -> {
+            // 将imgInfo对象存储到redis中，key为imgUrl，value为imgInfo对象，保存 10 天
+            redisTemplate.opsForValue().set(IMG_PREFIX_OF_REDIS + imgInfo.getImgUrl(), imgInfo, Duration.ofDays(10L));
+        });
     }
 
     @Override
@@ -187,24 +212,43 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
     }
 
     @Override
-    public ResponseEntity<InputStreamResource> download(DownloadVO vo) {
-        //判断img是否存在
-        long imgId = imgInfoDao.imgExistById(vo.getUrl());
-        if (imgId == 0)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        ImgInfo imgInfo = imgInfoDao.selectOneById(imgId);
+    public ResponseEntity<Object> download(DownloadVO vo) {
+        //参数校验
+        if (!StringGenerator.validateURL(vo.getUrl()))
+            return ResponseEntity.badRequest().body(R.error(HttpStatus.BAD_REQUEST, "invalid params"));
+
+        //获取图片信息
+        ImgInfo imgInfo;
+        if (redisTemplate.hasKey(IMG_PREFIX_OF_REDIS + vo.getUrl()))
+            imgInfo = (ImgInfo) redisTemplate.opsForValue().get(IMG_PREFIX_OF_REDIS + vo.getUrl());
+        else {
+            imgInfo = imgInfoDao.selectOneByImgUrl(vo.getUrl());
+            if (imgInfo == null)
+                return ResponseEntity.badRequest().body(R.error(HttpStatus.NOT_FOUND));
+            //缓存到redis
+            redisTemplate.opsForValue().set(IMG_PREFIX_OF_REDIS + vo.getUrl(), imgInfo, Duration.ofDays(10L));
+        }
         vo.setStoragePath(imgInfo.getStoragePath());
 
         //设置bucket
         vo.setBucketName(imgBucket.getBucketName());
+        log.info(imgInfo.toString());
+        log.info(vo.toString());
         //获取文件流
         InputStreamResource inputStream = new InputStreamResource(minioService.getObject(vo));
 
-
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + imgInfo.getOriginalFullName()); // inline 让浏览器直接展示
+        //设置浏览器处理图片的方式，默认是 attachment 下载。并设置文件名
+        headers.setContentDisposition(ContentDisposition.inline().filename(imgInfo.getOriginalFullName()).build());
+        //设置当前时间
+        headers.setDate(new Date().getTime());
+        //设置缓存时间 30 天
+        headers.setCacheControl(CacheControl.maxAge(Duration.ofDays(30)).cachePublic());
+        //设置最后修改时间
+        headers.setLastModified(imgInfo.getUpdatedTime().getTime());
         return ResponseEntity.ok()
                 .headers(headers)
+                .contentLength(imgInfo.getSize())
                 .contentType(MediaType.parseMediaType(imgInfo.getContentType()))
                 .body(inputStream);
     }
