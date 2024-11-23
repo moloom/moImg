@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 /**
  * @author: moloom
  * @date: 2024-11-01 00:36
@@ -43,22 +45,34 @@ public interface ImgInfoDao {
     int deleteById(Long imgId);
 
     /**
-     * @param imgId
-     * @return
+     * @param
+     * @return list of imgInfo
      * @author moloom
-     * @date 2024-11-01 01:20:59
-     * @description
+     * @date 2024-11-23 22:47:40
+     * @description select all imgInfo
      */
-    @Select("SELECT * FROM img_info WHERE img_id = #{imgId}")
-    ImgInfo selectOneById(Long imgId);
+    @Select("SELECT * FROM img_info")
+    List<ImgInfo> getAllImgInfos();
 
     /**
-     * @param imgUrl
-     * @return id
+     * @param imgId the id of img
+     * @return ImgInfo
      * @author moloom
-     * @date 2024-11-04 00:50:04
-     * @description search databases by img_url for check img_url is existed or not
+     * @date 2024-11-01 01:20:59
+     * @description select one record by img_id
      */
-    @Select("SELECT img_id FROM img_info WHERE img_url = #{imgUrl}")
-    Long imgExistByUrl(String imgUrl);
+    @Select("SELECT * FROM img_info WHERE img_id = #{imgId}")
+    ImgInfo selectOneByImgId(Long imgId);
+
+    /**
+     * @param imgUrl the url of img
+     * @return ImgInfo
+     * @author moloom
+     * @date 2024-11-23 22:52:16
+     * @description select one record by img_url
+     */
+    @Select("SELECT * FROM img_info WHERE img_url = #{imgUrl}")
+    ImgInfo selectOneByImgUrl(String imgUrl);
+
+
 }
