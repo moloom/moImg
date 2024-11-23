@@ -40,7 +40,7 @@ public interface ImgHandlerService {
      * @return
      * @description 从服务器返回文件
      */
-    public ResponseEntity<InputStreamResource> download(DownloadVO vo);
+    public ResponseEntity<Object> download(DownloadVO vo);
 
 
 }
