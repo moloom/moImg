@@ -41,7 +41,7 @@ public class TokensController {
             redisTemplate.opsForValue().set("token:all:" + token, Tokens.builder().token(token).status((byte) 1).createdBy(7L).build(), Duration.ofDays(1));
             return R.success().setData(Map.of("token", token));
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
 
     }
