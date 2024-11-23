@@ -21,7 +21,7 @@ public class DownloadController {
     private ImgHandlerService imgHandlerService;
 
     @GetMapping("/i/{url}.{extension}")
-    public ResponseEntity<InputStreamResource> download(
+    public ResponseEntity<Object> download(
             @PathVariable String url,
             @PathVariable String extension) {
 
