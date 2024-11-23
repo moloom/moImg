@@ -22,7 +22,7 @@ public class ErrorResponseHandler {
     public ResponseEntity<R> handleInternalServerError(Exception ex) {
 
         // 打印异常栈信息
-        log.error(null, ex);
+        log.error(ex.getMessage(), ex);
         // 返回自定义的错误信息
         return new ResponseEntity<>(R.error(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
