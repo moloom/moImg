@@ -1,14 +1,17 @@
 package com.moloom.img.api.controller;
 
+import com.moloom.img.api.entity.Tokens;
 import com.moloom.img.api.exception.ExtensionMismatchException;
 import com.moloom.img.api.service.UploadDispatcherService;
 import com.moloom.img.api.to.R;
 import com.moloom.img.api.service.CommonService;
+import com.moloom.img.api.utils.StringGenerator;
 import com.moloom.img.api.vo.FileUploadVo;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,24 +34,30 @@ public class UploadController {
     @Resource
     private UploadDispatcherService imgUploadDispatcherService;
 
-    @RequestMapping(value = "/upload/{token}", method = RequestMethod.POST, consumes = "multipart/form-data")
-    public R upload(FileUploadVo fileUploadVo, @RequestParam("file") MultipartFile multipartFile,
+    @RequestMapping(value = "/api/upload/{token}", method = RequestMethod.POST, consumes = "multipart/form-data")
+    public R upload(FileUploadVo vo, @RequestParam("file") MultipartFile multipartFile,
                     @PathVariable("token") String token,
                     HttpServletRequest request) {
+
+        // check token is not empty
+        if (token == null || token.isEmpty())
+            return R.error(HttpStatus.BAD_REQUEST, "token is empty");
+        //check token and valid and registered
+        if (!StringGenerator.validateToken(token) || redisTemplate.opsForValue().get("token:all:" + token) == null)
+            return R.error(HttpStatus.BAD_REQUEST, "token is illegal");
+
         //打印所有的参数
         log.info("request.getRemoteHost() = " + request.getRemoteHost());
         log.info("X-Forwarded-For:" + request.getHeader("X-Forwarded-For"));
         log.info("X-real-ip:" + request.getHeader("X-Real-IP"));
-        fileUploadVo.setToken(token).setMultipartFile(multipartFile);
-        log.info("controller::::{}", fileUploadVo.toString());
-        R r = null;
+        vo.setToken(token).setMultipartFile(multipartFile);
+        log.info("controller::::{}", vo.toString());
         try {
-            r = imgUploadDispatcherService.uploadDispatcher(fileUploadVo);
+            return R.success().setData(imgUploadDispatcherService.uploadDispatcher(vo));
         } catch (Exception e) {
             e.printStackTrace();
             return R.error(e.getMessage());
         }
-        return r;
     }
 
 }
