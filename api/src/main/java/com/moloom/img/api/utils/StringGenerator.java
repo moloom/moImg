@@ -50,19 +50,29 @@ public class StringGenerator {
 
     /**
      * @param token
-     * @return true is valid or false
+     * @return true if valid or false
      * @author moloom
      * @date 2024-11-20 21:10:28
      * @description check token is valid
      */
     public static boolean validateToken(String token) {
-        if (token == null || token.isEmpty())
+        if (token == null || token.isBlank())
             return false;
 
         // 正则匹配 TOKEN_LENGTH 位纯字母和数字
-        if (!token.matches("^[a-zA-Z0-9]{" + TOKEN_LENGTH + "}$"))
-            return false;
+        return token.matches("^[a-zA-Z0-9]{" + TOKEN_LENGTH + "}$");
+    }
 
-        return true;
+    /**
+     * @param url img url
+     * @return true if valid or false
+     * @author moloom
+     * @date 2024-11-23 21:03:15
+     * @description check url is valid
+     */
+    public static boolean validateURL(String url) {
+        if (url == null || url.isBlank())
+            return false;
+        return url.matches("^[a-zA-Z0-9]{" + URL_LENGTH + "}$");
     }
 }
