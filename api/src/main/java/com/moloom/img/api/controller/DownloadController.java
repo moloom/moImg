@@ -1,11 +1,9 @@
 package com.moloom.img.api.controller;
 
 import com.moloom.img.api.service.ImgHandlerService;
-import com.moloom.img.api.to.DownloadTO;
+import com.moloom.img.api.to.DownloadVO;
 import jakarta.annotation.Resource;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +25,7 @@ public class DownloadController {
             @PathVariable String url,
             @PathVariable String extension) {
 
-        return imgHandlerService.download(DownloadTO.builder()
+        return imgHandlerService.download(DownloadVO.builder()
                 .url(url)
                 .extension(extension)
                 .build());
