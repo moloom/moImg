@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @date: 2024-11-21 00:05
  * @description: error response handler
  */
-@ControllerAdvice
+//@ControllerAdvice
 @Slf4j
 public class ErrorResponseHandler {
     // 处理所有500错误
