@@ -54,7 +54,7 @@ public class MinioServiceImpl implements MinioService {
                 minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucket.getBucketName()).build());
             }
             //存储tags
-            if (bucket.getBucketTags() != null && bucket.getBucketTags().size() > 0)
+            if (bucket.getBucketTags() != null && !bucket.getBucketTags().isEmpty())
                 minioClient.setBucketTags(SetBucketTagsArgs.builder().bucket(bucket.getBucketName()).tags(bucket.getBucketTags()).build());
             return true;
         } catch (Exception e) {
@@ -65,11 +65,11 @@ public class MinioServiceImpl implements MinioService {
 
     @Override
     public boolean makeBucketsIfNotExist(ArrayList<Buckets> buckets) {
-        if (buckets == null || buckets.size() == 0)
+        if (buckets == null || buckets.isEmpty())
             return false;
         for (int i = 0; i < buckets.size(); i++) {
             if (!this.makeBucket(buckets.get(i))) {
-                log.debug("makeBucketsIfNotExist()::make bucket error");
+                log.info("makeBucketsIfNotExist()::make bucket error");
                 return false;
             }
         }
@@ -79,7 +79,7 @@ public class MinioServiceImpl implements MinioService {
     @Override
     public ObjectWriteResponse putObject(FileUploadVo vo) {
         try {
-            ObjectWriteResponse response = minioClient.putObject(
+            return minioClient.putObject(
                     PutObjectArgs
                             .builder()
                             .bucket(vo.getBucketName())
@@ -87,7 +87,6 @@ public class MinioServiceImpl implements MinioService {
                             .contentType(vo.getContentType())
                             .object(vo.getFileStoragePath())
                             .build());
-            return response;
         } catch (Exception e) {
             log.error("putObject()::put object to minIO error");
             throw new RuntimeException(e);
@@ -97,12 +96,11 @@ public class MinioServiceImpl implements MinioService {
     @Override
     public InputStream getObject(DownloadVO vo) {
         try {
-            InputStream stream = minioClient.getObject(
+            return minioClient.getObject(
                     GetObjectArgs.builder()
                             .bucket(vo.getBucketName())
                             .object(vo.getStoragePath())
                             .build());
-            return stream;
         } catch (Exception e) {
             log.error("getObject()::get object from minIO error");
             throw new RuntimeException(e);
