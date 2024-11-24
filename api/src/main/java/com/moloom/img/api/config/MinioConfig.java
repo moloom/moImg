@@ -1,7 +1,9 @@
 package com.moloom.img.api.config;
 
 import io.minio.MinioClient;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,16 +12,15 @@ import org.springframework.context.annotation.Configuration;
  * @date: 2024-10-05 20:29
  * @description: init a singleton MinioClient bean
  */
+@Data
 @Configuration
+@ConfigurationProperties(prefix = "minio.server")
 public class MinioConfig {
 
-    @Value("${minio.host}")
     private String host;
 
-    @Value("${minio.access-key}")
     private String accessKey;
 
-    @Value("${minio.secret-key}")
     private String secretKey;
 
     @Bean
