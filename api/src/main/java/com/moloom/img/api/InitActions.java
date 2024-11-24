@@ -1,13 +1,18 @@
 package com.moloom.img.api;
 
 import com.moloom.img.api.config.BucketConfig;
+import com.moloom.img.api.entity.ImgInfo;
+import com.moloom.img.api.entity.Tokens;
 import com.moloom.img.api.service.MinioService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+
+import java.time.Duration;
 
 
 /**
@@ -20,22 +25,23 @@ import org.springframework.stereotype.Component;
 public class InitActions implements InitializingBean {
 
     @Resource
-    private MinioService minioService;
-
-    @Resource
     private ApplicationContext applicationContext;
 
+    @Resource
+    private MinioService minioService;
     //获取bucket
     @Resource
     private BucketConfig bucketConfig;
+
+    @Resource
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public void afterPropertiesSet() throws Exception {
         log.info("This is InitActions implements InitializingBean");
         //在应用启动时，检查minio的几个bucket是否存在
         //开发阶段不开启
-//        checkMinioBucketExist();
-
+        checkMinioBucketExist();
     }
 
     /**
