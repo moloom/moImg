@@ -42,13 +42,18 @@ mybatis:
 moimg:
   upload:
     upload-root-path: "/api/files"
+  thread:
+    core-size: 20
+    max-size: 200
+    keep-alive-time: 10
 
 
 minio:
-#  host: "http://minio:9000"
-  host: "http://moloom.cn:8807"
-  access-key: "az5UMt1YqCueE8StuUtQ"
-  secret-key: "AMip5jaSAeHKhwlmjcpS8NKfTTNfdCHl9x8EpLeb"
+  server:
+    #  host: "http://minio:9000"
+    host: "http://moloom.cn:8807"
+    access-key: "az5UMt1YqCueE8StuUtQ"
+    secret-key: "AMip5jaSAeHKhwlmjcpS8NKfTTNfdCHl9x8EpLeb"
   buckets: #桶名称，第一个是存图片的，第二个是存视频的
     - bucket-name: "images"
       bucket-tags:
@@ -58,5 +63,6 @@ minio:
       bucket-tags:
         type: "video"
         author: "moloom"
+
 
 
