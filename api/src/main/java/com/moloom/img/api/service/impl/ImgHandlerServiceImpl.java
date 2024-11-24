@@ -230,17 +230,15 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
                 if (redisTemplate.hasKey(key)) {
                     imgInfo = (ImgInfo) redisTemplate.opsForValue().get(key);
                 } else {
-                    log.info("search to db");
+                    log.debug("search to db");
                     imgInfo = imgInfoDao.selectOneByImgUrl(vo.getUrl());
                     //db也没数据时，存一个值为null的keys进去，失效 1 分钟，防止缓存穿透
                     if (imgInfo == null) {
                         log.debug("set a key {} with value is null", key);
                         redisTemplate.opsForValue().set(key, null, Duration.ofMinutes(1L));
-                        return ResponseEntity.badRequest().body(R.error(HttpStatus.NOT_FOUND));
-                    }
-                    //有效数据缓存到redis
-                    redisTemplate.opsForValue().set(key, imgInfo, Duration.ofDays(10L));
-
+                    } else
+                        //有效数据缓存到redis
+                        redisTemplate.opsForValue().set(key, imgInfo, Duration.ofDays(10L));
                 }
             }
         }
