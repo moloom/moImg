@@ -5,6 +5,7 @@ import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 /**
  * @author: moloom
@@ -20,8 +22,9 @@ import java.time.format.DateTimeFormatter;
  * @description:
  */
 @RestController
-//@RequestMapping("/i")
-public class Test {
+@RequestMapping("/api")
+@Slf4j
+public class TestController {
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
@@ -33,22 +36,22 @@ public class Test {
     public R TestConnection() throws Exception {
         // 获取当前时间
         LocalDateTime currentTime = LocalDateTime.now();
-
         // 定义日期时间格式
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
         // 格式化当前时间为字符串
         String formattedTime = currentTime.format(formatter);
 
 
         //测试minio连接
-        boolean bucketExists = minioClient.bucketExists(BucketExistsArgs.builder().bucket("qwertyuiop").build());
+        boolean bucketExists = minioClient.bucketExists(BucketExistsArgs.builder().bucket("images").build());
         if (!bucketExists) {
-            minioClient.makeBucket(MakeBucketArgs.builder().bucket("qwertyuiop").build());
+            minioClient.makeBucket(MakeBucketArgs.builder().bucket("images").build());
+            log.info("already make bucket images");
         } else
-            System.out.println("bucket qwertyuiop is exists");
+            log.info("bucket images is exists");
+        //测试redis连接
         redisTemplate.opsForValue().set("currentTime", formattedTime);
-        return R.success("test is success!!");
+        return R.success("test is success!!").setData(Map.of("currentTime", formattedTime));
     }
 
     @GetMapping("/login")
