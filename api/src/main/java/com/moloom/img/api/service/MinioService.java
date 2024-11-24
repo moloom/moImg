@@ -2,8 +2,8 @@ package com.moloom.img.api.service;
 
 
 import com.moloom.img.api.to.Buckets;
-import com.moloom.img.api.to.DownloadVO;
-import com.moloom.img.api.vo.FileUploadVo;
+import com.moloom.img.api.vo.DownloadVO;
+import com.moloom.img.api.vo.UploadVo;
 import io.minio.ObjectWriteResponse;
 
 import java.io.InputStream;
@@ -44,20 +44,20 @@ public interface MinioService {
     public boolean makeBucketsIfNotExist(ArrayList<Buckets> buckets);
 
     /**
-     * @param fileUploadVo 存储的img和img信息
+     * @param vo 存储的img和img信息
      * @return
      * @author moloom
      * @date 2024-10-31 01:30:22
      * @description Uploads given stream as object in bucket.
      */
-    public ObjectWriteResponse putObject(FileUploadVo vo);
+    public ObjectWriteResponse putObject(UploadVo vo);
 
     /**
-     * @param downloadTO
+     * @param vo info about download
      * @return return InputStream,and must be closed after use to release network resources.
      * @author moloom
      * @date 2024-10-31 01:35:09
      * @description Gets data of an object.
      */
-    public InputStream getObject(DownloadVO downloadTO);
+    public InputStream getObject(DownloadVO vo);
 }

@@ -7,11 +7,12 @@ import com.moloom.img.api.entity.ImgCameraInfo;
 import com.moloom.img.api.entity.ImgCategory;
 import com.moloom.img.api.entity.ImgInfo;
 import com.moloom.img.api.service.ImgHandlerService;
+import com.moloom.img.api.service.VideoHandlerService;
 import com.moloom.img.api.to.Buckets;
-import com.moloom.img.api.to.DownloadVO;
+import com.moloom.img.api.vo.DownloadVO;
 import com.moloom.img.api.to.R;
 import com.moloom.img.api.utils.StringGenerator;
-import com.moloom.img.api.vo.FileUploadVo;
+import com.moloom.img.api.vo.UploadVo;
 import io.minio.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
@@ -29,9 +30,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.io.InputStream;
-import java.lang.reflect.Array;
-import java.nio.charset.Charset;
 import java.time.Duration;
 import java.util.Date;
 import java.util.List;
@@ -52,6 +50,9 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
 
     @Resource
     private MinioServiceImpl minioService;
+
+    @Resource
+    private VideoHandlerService videoHandlerService;
 
     @Resource
     private ImgInfoDao imgInfoDao;
@@ -100,8 +101,10 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         });
     }
 
+
+
     @Override
-    public R imghandler(FileUploadVo fileUploadVo) {
+    public R imghandler(UploadVo vo) {
         /*
          * 1.
          *
@@ -114,41 +117,41 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
             minioService.makeBucket(imgBucket);
 
         //获取文件后缀名
-        if (fileUploadVo.getFileExtension() == null || fileUploadVo.getFileExtension().isEmpty()) {
+        if (vo.getFileExtension() == null || vo.getFileExtension().isEmpty()) {
             try {
                 //使用 Tika的MimeTypes获取文件后缀名
-                String extension = MimeTypes.getDefaultMimeTypes().forName(fileUploadVo.getContentType()).getExtension();
+                String extension = MimeTypes.getDefaultMimeTypes().forName(vo.getContentType()).getExtension();
                 if (extension == null || extension.isEmpty())
                     throw new NullPointerException("get image extension error by mimetype,please check the uploaded file type is images!");
-                fileUploadVo.setFileExtension(extension);
+                vo.setFileExtension(extension);
             } catch (MimeTypeException e) {
                 throw new RuntimeException();
             }
         }
         //设置文件名
-        if (fileUploadVo.getFileName() == null || fileUploadVo.getFileName().isEmpty()) {
-            String filename = fileUploadVo.getMultipartFile().getOriginalFilename();
+        if (vo.getFileName() == null || vo.getFileName().isEmpty()) {
+            String filename = vo.getMultipartFile().getOriginalFilename();
             int lastIndexOf = filename.lastIndexOf('.');
             if (lastIndexOf > 0)
                 filename = filename.substring(0, lastIndexOf);
-            fileUploadVo.setFileName(filename);
+            vo.setFileName(filename);
         }
-        log.info("fileUploadVo.getMultipartFile().getOriginalFilename()文件名::{}", fileUploadVo.getMultipartFile().getOriginalFilename());
+        log.info("fileUploadVo.getMultipartFile().getOriginalFilename()文件名::{}", vo.getMultipartFile().getOriginalFilename());
         //设置存储bucket名称
-        fileUploadVo.setBucketName(imgBucket.getBucketName());
+        vo.setBucketName(imgBucket.getBucketName());
         //拼接存储路径，路径格式 {token}/{originalName}_{imgCategory}{extension}
         StringBuilder imgStoragePath = new StringBuilder()
-                .append(fileUploadVo.getToken())
+                .append(vo.getToken())
                 .append("/")
-                .append(fileUploadVo.getFileName())
+                .append(vo.getFileName())
                 .append("_")
                 .append(ImgCategory.SOURCE.getName())
-                .append(fileUploadVo.getFileExtension());
-        fileUploadVo.setFileStoragePath(imgStoragePath.toString());
+                .append(vo.getFileExtension());
+        vo.setFileStoragePath(imgStoragePath.toString());
 
-        log.info("file info ::{}", fileUploadVo.toString());
+        log.info("file info ::{}", vo.toString());
         //--------------------------------存储img到minIO，异步处理(X)-------------------------------------
-        ObjectWriteResponse response = minioService.putObject(fileUploadVo);
+        ObjectWriteResponse response = minioService.putObject(vo);
         log.info("ObjectWriteResponse::{}\n={}\n={}\n={}\n={}", response.etag(), response.bucket(), response.versionId(), response.object(), response.headers());
         //--------------------------------获取img元数据，保存到数据库，异步处理(X)-------------------------------------
         //初始化解析元数据要用到的对象
@@ -158,7 +161,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         ParseContext context = new ParseContext();
         try {
             // 解析图片的元数据，数据在 Metadata 对象中
-            parser.parse(fileUploadVo.getMultipartFile().getInputStream(), handler, metadata, context);
+            parser.parse(vo.getMultipartFile().getInputStream(), handler, metadata, context);
         } catch (Exception e) {
             throw new RuntimeException("parse the images error");
         }
@@ -183,13 +186,13 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         //插入图片信息到数据库
         ImgInfo img = ImgInfo.builder()
                 .imgUrl(StringGenerator.getURL())
-                .originalFullName(fileUploadVo.getFileName() + fileUploadVo.getFileExtension())
+                .originalFullName(vo.getFileName() + vo.getFileExtension())
                 .storageFullName(imgStoragePath.substring(imgStoragePath.indexOf("/") + 1, imgStoragePath.length()))
-                .storagePath(fileUploadVo.getFileStoragePath())
-                .size(fileUploadVo.getMultipartFile().getSize())
-                .extension(fileUploadVo.getFileExtension())
-                .contentType(fileUploadVo.getContentType())
-                .token(fileUploadVo.getToken())
+                .storagePath(vo.getFileStoragePath())
+                .size(vo.getMultipartFile().getSize())
+                .extension(vo.getFileExtension())
+                .contentType(vo.getContentType())
+                .token(vo.getToken())
                 .imgCategory(ImgCategory.SOURCE)
                 .width(imgCameraInfo.getWidth())
                 .build();

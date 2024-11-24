@@ -1,10 +1,16 @@
 package com.moloom.img.api.entity;
 
+import lombok.Getter;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * @author: moloom
  * @date: 2024-10-31 23:03
  * @description: 图片种类
  */
+@Getter
 public enum ImgCategory {
     SOURCE("source", 1),
     THUMBNAIL("thumbnail", 2),
@@ -19,27 +25,18 @@ public enum ImgCategory {
         this.value = (byte) value;
     }
 
-    public byte getValue() {
-        return value;
-    }
-
-    public String getName() {
-        return name;
-    }
-
+    @Nullable
     public static ImgCategory matchFromValue(byte value) {
-        switch (value) {
-            case 1:
-                return SOURCE;
-            case 2:
-                return THUMBNAIL;
-            case 3:
-                return CUSTOM;
-            default:
-                return null;
-        }
+        return switch (value) {
+            case 1 -> SOURCE;
+            case 2 -> THUMBNAIL;
+            case 3 -> CUSTOM;
+            default -> null;
+        };
     }
 
+    @NotNull
+    @Contract(pure = true)
     @Override
     public String toString() {
         return "ImgCategory{" +

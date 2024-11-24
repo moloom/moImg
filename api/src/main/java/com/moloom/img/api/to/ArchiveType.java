@@ -1,4 +1,4 @@
-package com.moloom.img.api.entity.minetype;
+package com.moloom.img.api.to;
 
 import java.util.Arrays;
 import java.util.List;

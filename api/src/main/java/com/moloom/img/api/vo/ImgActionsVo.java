@@ -1,6 +1,8 @@
 package com.moloom.img.api.vo;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * @author: moloom
@@ -8,6 +10,8 @@ import lombok.Data;
  * @description:
  */
 @Data
+@Builder
+@Accessors(chain = true)
 public class ImgActionsVo {
     private Integer width;
     private Integer height; //

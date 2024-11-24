@@ -1,4 +1,4 @@
-package com.moloom.img.api.entity;
+package com.moloom.img.api.to;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

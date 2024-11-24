@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 @Builder
 @Accessors(chain = true)
-public class FileUploadVo {
+public class UploadVo {
     private String fileName;    //文件名，不带后缀的,如果是在页面上传文件，页面会获取文件名，若是api则需自己获取
     private String fileExtension; //文件的拓展名，如果是在页面上传文件，页面会获取后缀，若是api则需自己获取
     private String contentType;     //文件类型；例：application/x-gtar、video/mp4

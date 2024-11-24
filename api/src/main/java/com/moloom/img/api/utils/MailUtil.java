@@ -1,6 +1,6 @@
 package com.moloom.img.api.utils;
 
-import com.moloom.img.api.entity.Mail;
+import com.moloom.img.api.to.Mail;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;

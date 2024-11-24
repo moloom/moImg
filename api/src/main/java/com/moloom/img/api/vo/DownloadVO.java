@@ -1,4 +1,4 @@
-package com.moloom.img.api.to;
+package com.moloom.img.api.vo;
 
 import lombok.Builder;
 import lombok.Data;

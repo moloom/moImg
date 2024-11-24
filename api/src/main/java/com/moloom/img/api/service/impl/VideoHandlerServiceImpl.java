@@ -2,7 +2,7 @@ package com.moloom.img.api.service.impl;
 
 import com.moloom.img.api.service.VideoHandlerService;
 import com.moloom.img.api.to.R;
-import com.moloom.img.api.vo.FileUploadVo;
+import com.moloom.img.api.vo.UploadVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class VideoHandlerServiceImpl implements VideoHandlerService {
     @Override
-    public R videoHandler(FileUploadVo fileUploadVo) {
+    public R videoHandler(UploadVo vo) {
 //        视频格式要转换成 hevc
         return null;
     }

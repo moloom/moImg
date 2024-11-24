@@ -2,8 +2,8 @@ package com.moloom.img.api.service.impl;
 
 import com.moloom.img.api.service.MinioService;
 import com.moloom.img.api.to.Buckets;
-import com.moloom.img.api.to.DownloadVO;
-import com.moloom.img.api.vo.FileUploadVo;
+import com.moloom.img.api.vo.DownloadVO;
+import com.moloom.img.api.vo.UploadVo;
 import io.minio.*;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -77,7 +77,7 @@ public class MinioServiceImpl implements MinioService {
     }
 
     @Override
-    public ObjectWriteResponse putObject(FileUploadVo vo) {
+    public ObjectWriteResponse putObject(UploadVo vo) {
         try {
             return minioClient.putObject(
                     PutObjectArgs
