@@ -217,17 +217,37 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         if (!StringGenerator.validateURL(vo.getUrl()))
             return ResponseEntity.badRequest().body(R.error(HttpStatus.BAD_REQUEST, "invalid params"));
 
-        //获取图片信息
+        String key = IMG_PREFIX_OF_REDIS + vo.getUrl();
+        //get ImgInfo obj
         ImgInfo imgInfo;
-        if (redisTemplate.hasKey(IMG_PREFIX_OF_REDIS + vo.getUrl()))
-            imgInfo = (ImgInfo) redisTemplate.opsForValue().get(IMG_PREFIX_OF_REDIS + vo.getUrl());
-        else {
-            imgInfo = imgInfoDao.selectOneByImgUrl(vo.getUrl());
-            if (imgInfo == null)
-                return ResponseEntity.badRequest().body(R.error(HttpStatus.NOT_FOUND));
-            //缓存到redis
-            redisTemplate.opsForValue().set(IMG_PREFIX_OF_REDIS + vo.getUrl(), imgInfo, Duration.ofDays(10L));
+        if (redisTemplate.hasKey(key)) {
+            imgInfo = (ImgInfo) redisTemplate.opsForValue().get(key);
+        } else {
+            //if not exists in redis, search to db
+            synchronized (key.intern()) {
+                log.debug("get lock of {}", key);
+                //拿到锁后再判断一次数据有没有存在。避免有多个请求在wait,而第一个请求拿到锁后，后面的请求又去db查询
+                if (redisTemplate.hasKey(key)) {
+                    imgInfo = (ImgInfo) redisTemplate.opsForValue().get(key);
+                } else {
+                    log.info("search to db");
+                    imgInfo = imgInfoDao.selectOneByImgUrl(vo.getUrl());
+                    //db也没数据时，存一个值为null的keys进去，失效 1 分钟，防止缓存穿透
+                    if (imgInfo == null) {
+                        log.debug("set a key {} with value is null", key);
+                        redisTemplate.opsForValue().set(key, null, Duration.ofMinutes(1L));
+                        return ResponseEntity.badRequest().body(R.error(HttpStatus.NOT_FOUND));
+                    }
+                    //有效数据缓存到redis
+                    redisTemplate.opsForValue().set(key, imgInfo, Duration.ofDays(10L));
+
+                }
+            }
         }
+        //return 404 when img not founded
+        if (imgInfo == null)
+            return ResponseEntity.badRequest().body(R.error(HttpStatus.NOT_FOUND));
+
         vo.setStoragePath(imgInfo.getStoragePath());
 
         //设置bucket
