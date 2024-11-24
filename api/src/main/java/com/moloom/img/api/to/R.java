@@ -10,7 +10,7 @@ import java.util.LinkedHashMap;
  * @description: api返回类：status: 状态码；msg: 提示信息，data: 数据。
  * HashMap类会颠倒key的顺序，所以这里使用LinkedHashMap
  */
-public class R<T> extends LinkedHashMap<String, Object> {
+public class R extends LinkedHashMap<String, Object> {
     private static final long serialVersionUID = 1L;
 
     private R(int status, String msg) {
