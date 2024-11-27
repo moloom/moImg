@@ -3,6 +3,7 @@ package com.moloom.img.api.dao;
 import com.moloom.img.api.entity.Tokens;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 /**
  * @author: moloom
@@ -18,7 +19,7 @@ public interface TokensDao {
      * @date 2024-11-18 20:52:57
      * @description insert a record into tokens table
      */
-    public int insert(Tokens token);
+    long insert(Tokens token);
 
     /**
      * @param token token object
@@ -27,7 +28,7 @@ public interface TokensDao {
      * @date 2024-11-18 21:40:20
      * @description update a record in tokens table
      */
-    public int update(Tokens token);
+    long update(Tokens token);
 
     /**
      * @param token
@@ -37,5 +38,8 @@ public interface TokensDao {
      * @description delete a record in tokens table by token
      */
     @Delete("delete from tokens where token = {token}")
-    public int deleteByToken(String token);
+    long deleteByToken(String token);
+
+    @Select("select * from tokens where token = {token}")
+    Long selectOneByToken(String token);
 }
