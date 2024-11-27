@@ -17,10 +17,13 @@ public class MoUtils {
      * @description 在当前日期上加减天数，上下差不超过 day 的一半
      */
     public static long randomDays(int day) {
-        // default day is around 10 days
+        long days = 5l;
+        // 最低天数是 5~10
         if (day <= 5)
-            return (long) (Math.random() * 10);
-        return (long) (Math.random() * (day >> 1));
-
+            days = days + (long) (Math.random() * 5);
+        else
+            // 天数是 day 的一半
+            days = (day >> 1) + (long) (Math.random() * (day));
+        return days;
     }
 }

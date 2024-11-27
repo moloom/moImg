@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 /**
  * @author: moloom
  * @date: 2024-11-18 20:51
@@ -37,9 +39,12 @@ public interface TokensDao {
      * @date 2024-11-18 21:43:25
      * @description delete a record in tokens table by token
      */
-    @Delete("delete from tokens where token = {token}")
+    @Delete("delete from tokens where token = #{token}")
     long deleteByToken(String token);
 
-    @Select("select * from tokens where token = {token}")
-    Long selectOneByToken(String token);
+    @Select("select * from tokens where token = #{token}")
+    Tokens selectOneByToken(String token);
+
+    @Select("select * from tokens")
+    List<Tokens> selectAll();
 }
