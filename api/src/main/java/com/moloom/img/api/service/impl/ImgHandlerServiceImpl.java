@@ -9,6 +9,7 @@ import com.moloom.img.api.entity.ImgInfo;
 import com.moloom.img.api.service.ImgHandlerService;
 import com.moloom.img.api.service.VideoHandlerService;
 import com.moloom.img.api.to.Buckets;
+import com.moloom.img.api.utils.MoUtils;
 import com.moloom.img.api.vo.DownloadVO;
 import com.moloom.img.api.to.R;
 import com.moloom.img.api.utils.StringGenerator;
@@ -70,8 +71,8 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
     private Buckets imgBucket;
 
     //redis中imgInfo的key前缀
-    //imgInfo 有效期 10 天
-    private static final String IMG_PREFIX_OF_REDIS = "imgInfo:all:";
+    @Resource
+    private String imgInfoPrefix;
 
 
     @PostConstruct
@@ -96,11 +97,10 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         // 从数据库拉取所有数据
         List<ImgInfo> imgInfos = imgInfoDao.getAllImgInfos();
         imgInfos.forEach(imgInfo -> {
-            // 将imgInfo对象存储到redis中，key为imgUrl，value为imgInfo对象，保存 10 天
-            redisTemplate.opsForValue().set(IMG_PREFIX_OF_REDIS + imgInfo.getImgUrl(), imgInfo, Duration.ofDays(10L));
+            // 将imgInfo对象存储到redis中，key为imgUrl，value为imgInfo对象，保存 14+-7 天
+            redisTemplate.opsForValue().set(imgInfoPrefix + imgInfo.getImgUrl(), imgInfo, Duration.ofDays(MoUtils.randomDays(14)));
         });
     }
-
 
 
     @Override
@@ -178,6 +178,8 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         //还有很多值像createdBy等都没插入进去!!!!!!!!!!!!!!!!!!!!!
         ImgCameraInfo imgCameraInfo = ImgCameraInfo.builder().build().fromMetadata(metadata);
         log.info(imgCameraInfo.toString());
+        return R.success();
+/*
         int flag = imgCameraInfoDao.insert(imgCameraInfo);
         if (flag > 0)
             log.info("imgCameraInfo插入成功");
@@ -198,7 +200,8 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
                 .build();
         int imgAffected = imgInfoDao.insert(img);
 
-        return R.success().setData(img.getImgUrl());
+
+        return R.success().setData(img.getImgUrl());*/
     }
 
     @Override
@@ -220,7 +223,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         if (!StringGenerator.validateURL(vo.getUrl()))
             return ResponseEntity.badRequest().body(R.error(HttpStatus.BAD_REQUEST, "invalid params"));
 
-        String key = IMG_PREFIX_OF_REDIS + vo.getUrl();
+        String key = imgInfoPrefix + vo.getUrl();
         //get ImgInfo obj
         ImgInfo imgInfo;
         if (redisTemplate.hasKey(key)) {

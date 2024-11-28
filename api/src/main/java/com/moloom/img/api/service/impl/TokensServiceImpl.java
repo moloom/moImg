@@ -11,10 +11,8 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,8 +32,8 @@ public class TokensServiceImpl implements TokensService {
 
 
     //redis中 token 的key前缀
-    //tokens 有效期  天
-    private static final String TOKEN_PREFIX_OF_REDIS = "tokens:all:";
+    @Resource
+    private String tokensPrefix;
 
 
     /**
@@ -49,7 +47,7 @@ public class TokensServiceImpl implements TokensService {
             tokensDao.selectAll().forEach(token -> {
                 if (token.getStatus() != 0)
                     //根据token的状态设置过期时间，过期时间=(status*4)+-(status*2)
-                    redisTemplate.opsForValue().set(TOKEN_PREFIX_OF_REDIS + token.getToken(), token, Duration.ofDays(MoUtils.randomDays(token.getStatus() << 2)));
+                    redisTemplate.opsForValue().set(tokensPrefix + token.getToken(), token, Duration.ofDays(MoUtils.randomDays(token.getStatus() << 2)));
             });
         } catch (Exception e) {
             log.error("preload tokens to redis is error");
@@ -66,7 +64,7 @@ public class TokensServiceImpl implements TokensService {
             token = StringGenerator.getToken();
             // 先占坑，尝试在 Redis 中添加
             Boolean isSet = redisTemplate.opsForValue()
-                    .setIfAbsent(TOKEN_PREFIX_OF_REDIS + token, Tokens.builder()
+                    .setIfAbsent(tokensPrefix + token, Tokens.builder()
                             .token(token)
                             .status((byte) 1)
                             .createdBy(1L)
@@ -76,7 +74,7 @@ public class TokensServiceImpl implements TokensService {
                 // 若 token 已存在数据库中，则删除 Redis 锁，重新生成一个
                 if (this.isExist(token))
                     // 删除 Redis 锁
-                    redisTemplate.delete(TOKEN_PREFIX_OF_REDIS + token);
+                    redisTemplate.delete(tokensPrefix + token);
                 else
                     return R.success().setData(Map.of("token", token));
             }

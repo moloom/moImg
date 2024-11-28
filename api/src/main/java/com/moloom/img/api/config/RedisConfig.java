@@ -75,5 +75,28 @@ public class RedisConfig {
                 .build();
         return cacheManager;
     }
+
+
+    /**
+     * @return prefix of tokens
+     * @author moloom
+     * @date 2024-11-28 17:19:26
+     * @description 注入在redis中的 tokens 前缀
+     */
+    @Bean("tokensPrefix")
+    public String tokensPrefix() {
+        return "tokens:all:";
+    }
+
+    /**
+     * @return prefix of imgInfo
+     * @author moloom
+     * @date 2024-11-28 17:19:26
+     * @description 注入在redis中的 imgInfo 前缀
+     */
+    @Bean("imgInfoPrefix")
+    public String imgInfoPrefix() {
+        return "imgInfo:all:";
+    }
 }
 
