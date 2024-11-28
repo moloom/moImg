@@ -5,6 +5,7 @@ import com.moloom.img.api.service.UploadDispatcherService;
 import com.moloom.img.api.vo.DownloadVO;
 import com.moloom.img.api.to.R;
 import com.moloom.img.api.utils.StringGenerator;
+import com.moloom.img.api.vo.ImgActionsVo;
 import com.moloom.img.api.vo.UploadVo;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,35 +31,37 @@ public class UpDownLoadController {
 
 
     @Resource
-    private UploadDispatcherService imgUploadDispatcherService;
+    private UploadDispatcherService uploadDispatcherService;
 
     @Resource
     private ImgHandlerService imgHandlerService;
 
+    //redis中 token 的key前缀
+    @Resource
+    private String tokensPrefix;
+
     @RequestMapping(value = "/api/upload/{token}", method = RequestMethod.POST, consumes = "multipart/form-data")
-    public R upload(UploadVo vo, @RequestParam("file") MultipartFile multipartFile,
-                    @PathVariable("token") String token,
+    public R upload(@RequestParam("file") MultipartFile[] multipartFile,
+                    @PathVariable("token") String token, ImgActionsVo actionsVo,
                     HttpServletRequest request) {
 
         // check token is not empty
         if (token == null || token.isEmpty())
             return R.error(HttpStatus.BAD_REQUEST, "token is empty");
         //check token and valid and registered
-        if (!StringGenerator.validateToken(token) || redisTemplate.opsForValue().get("token:all:" + token) == null)
+        if (!StringGenerator.validateToken(token) || !redisTemplate.hasKey(tokensPrefix + token))
             return R.error(HttpStatus.BAD_REQUEST, "token is illegal");
 
         //打印所有的参数
-        log.info("request.getRemoteHost() = " + request.getRemoteHost());
-        log.info("X-Forwarded-For:" + request.getHeader("X-Forwarded-For"));
-        log.info("X-real-ip:" + request.getHeader("X-Real-IP"));
-        vo.setToken(token).setMultipartFile(multipartFile);
-        log.info("controller::::{}", vo.toString());
-        try {
-            return R.success().setData(imgUploadDispatcherService.uploadDispatcher(vo));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return R.error(e.getMessage());
-        }
+        log.info("request.getRemoteHost() = {}", request.getRemoteHost());
+        log.info("X-Forwarded-For:{}", request.getHeader("X-Forwarded-For"));
+        log.info("X-real-ip:{}", request.getHeader("X-Real-IP"));
+
+        return uploadDispatcherService.uploadDispatcher(UploadVo.builder()
+                .token(token)
+                .multipartFile(multipartFile)
+                .actionsVo(actionsVo)
+                .build());
     }
 
     @GetMapping("/i/{url}.{extension}")

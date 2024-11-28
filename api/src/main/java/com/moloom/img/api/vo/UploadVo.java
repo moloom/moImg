@@ -19,7 +19,7 @@ public class UploadVo {
     private String contentType;     //文件类型；例：application/x-gtar、video/mp4
     private String fileStoragePath;  //存储路径
     private String bucketName;  //存储的bucket名
-    private MultipartFile multipartFile;
+    private MultipartFile[] multipartFile;
     private String token;
     private ImgActionsVo actionsVo;
 }
