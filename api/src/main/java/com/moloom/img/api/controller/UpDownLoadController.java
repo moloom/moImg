@@ -41,7 +41,7 @@ public class UpDownLoadController {
     private String tokensPrefix;
 
     @RequestMapping(value = "/api/upload/{token}", method = RequestMethod.POST, consumes = "multipart/form-data")
-    public R upload(@RequestParam("file") MultipartFile[] multipartFile,
+    public R upload(@RequestParam("file") MultipartFile[] multipartFiles,
                     @PathVariable("token") String token, ImgActionsVo actionsVo,
                     HttpServletRequest request) {
 
@@ -59,9 +59,8 @@ public class UpDownLoadController {
 
         return uploadDispatcherService.uploadDispatcher(UploadVo.builder()
                 .token(token)
-                .multipartFile(multipartFile)
                 .actionsVo(actionsVo)
-                .build());
+                .build(), multipartFiles);
     }
 
     @GetMapping("/i/{url}.{extension}")
