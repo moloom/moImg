@@ -129,9 +129,11 @@ public class ImgCameraInfo {
         this.setLensModel(metadata.get("Exif SubIFD:Lens Model"));
         this.setLensSpecification(metadata.get("Exif SubIFD:Lens Specification"));
         this.setDateTimeOriginal(convertStringToTimestamp(metadata.get("Exif SubIFD:Date/Time Original")));
-        this.setSubsecTimeOriginal(Integer.valueOf(metadata.get("Exif SubIFD:Sub-Sec Time Original")));
+        if (metadata.get("Exif SubIFD:Sub-Sec Time Original") != null)
+            this.setSubsecTimeOriginal(Integer.valueOf(metadata.get("Exif SubIFD:Sub-Sec Time Original")));
         this.setDateTimeDigitized(convertStringToTimestamp(metadata.get("Exif SubIFD:Date/Time Digitized")));
-        this.setSubsecTimeDigitized(Integer.valueOf(metadata.get("Exif SubIFD:Sub-Sec Time Digitized")));
+        if (metadata.get("Exif SubIFD:Sub-Sec Time Digitized") != null)
+            this.setSubsecTimeDigitized(Integer.valueOf(metadata.get("Exif SubIFD:Sub-Sec Time Digitized")));
 
         if (metadata.get("tiff:ImageWidth") != null)
             this.setWidth(Integer.valueOf(metadata.get("tiff:ImageWidth")));
