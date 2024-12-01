@@ -41,7 +41,7 @@ public class TokensServiceImpl implements TokensService {
      * @date 2024-11-27 16:57:56
      * @description 启动时，将数据库中已存在的token加载到redis中
      */
-    @PostConstruct
+//    @PostConstruct
     public void preloadTokensToRedis() {
         try {
             tokensDao.selectAll().forEach(token -> {
