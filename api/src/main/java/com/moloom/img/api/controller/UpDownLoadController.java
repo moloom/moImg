@@ -45,10 +45,7 @@ public class UpDownLoadController {
                     @PathVariable("token") String token, ImgActionsVo actionsVo,
                     HttpServletRequest request) {
 
-        // check token is not empty
-        if (token == null || token.isEmpty())
-            return R.error(HttpStatus.BAD_REQUEST, "token is empty");
-        //check token and valid and registered
+        //check token is valid and registered
         if (!StringGenerator.validateToken(token) || !redisTemplate.hasKey(tokensPrefix + token))
             return R.error(HttpStatus.BAD_REQUEST, "token is illegal");
 
