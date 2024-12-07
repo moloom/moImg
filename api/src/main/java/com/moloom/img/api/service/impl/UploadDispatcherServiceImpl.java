@@ -87,7 +87,7 @@ public class UploadDispatcherServiceImpl implements UploadDispatcherService {
 
         //检查处理结果，如果全成功则返回成功，否则返回失败。且都返回每个文件的处理结果
         boolean b = handlerResult.stream().allMatch(r -> r.getStatus() == HttpStatus.OK.value());
-        System.out.println(b);
+        System.out.println("上传结果:"+b);
         return R.success();
     }
 
