@@ -33,8 +33,8 @@ public class ImgInfo {
     private ImgCategory imgCategory;
     private Long imgCameraInfoId;
     private Long geoId;
-    private Timestamp originalCreatedTime;
-    private Timestamp originalUpdatedTime;
+    private Timestamp originalCreatedTime;      //图片文件的创建时间；    两属性由前端页面获取，若用户是用api上传，则这两个属性为 null ！
+    private Timestamp originalUpdatedTime;      //图片文件的修改时间
     private Long viewCount;
     private Long viewUser;
     private Long createdBy;
