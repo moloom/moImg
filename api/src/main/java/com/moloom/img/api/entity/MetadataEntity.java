@@ -7,11 +7,14 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.apache.tika.metadata.Metadata;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.util.StringUtils;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 /**
  * @author: moloom
@@ -102,6 +105,7 @@ public class MetadataEntity {
             this.setDocumentarySoftware(metadata.get("Exif IFD0:Software"));
         this.setArtist(metadata.get("Exif IFD0:Artist"));
         this.setTitle(metadata.get("dc:title"));
+        this.setKeywords(metadata.get("Keywords"));
         this.setCopyright(metadata.get("Exif IFD0:Copyright"));
         this.setOrientation(metadata.get("tiff:Orientation"));
         if (metadata.get("tiff:XResolution") != null)
@@ -146,7 +150,7 @@ public class MetadataEntity {
         if (metadata.get("Exif SubIFD:Date/Time Digitized") != null)
             this.setDateTimeDigitized(convertStringToTimestamp(metadata.get("Exif SubIFD:Date/Time Digitized")));
         else if (metadata.get("Exif IFD0:Date/Time") != null)
-            this.setDateTimeDigitized(convertStringToTimestamp(metadata.get("Exif IFD0:Date/Time"), "yyyy:MM:ddTHH:mm:ss.M"));
+            this.setDateTimeDigitized(convertStringToTimestamp(metadata.get("Exif IFD0:Date/Time")));
         if (metadata.get("Exif SubIFD:Sub-Sec Time Digitized") != null)
             this.setSubsecTimeDigitized(Integer.valueOf(metadata.get("Exif SubIFD:Sub-Sec Time Digitized")));
 
@@ -184,9 +188,23 @@ public class MetadataEntity {
      * @return Timestamp
      * @author moloom
      * @date 2024-11-18 21:13:22
-     * @description Convert string format is 'yyyy:MM:dd HH:mm:ss' to Timestamp
+     * @description Convert string to Timestamp with automation parsing
      */
+    @Nullable
     public static Timestamp convertStringToTimestamp(String str) {
-        return convertStringToTimestamp(str, "yyyy:MM:dd HH:mm:ss");
+        if (str == null)
+            return null;
+        // 正则表达式匹配两种格式
+        Pattern iso8601Pattern = Pattern.compile("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[+-]\\d{2}:\\d{2}");
+        Pattern defaltPattern = Pattern.compile("\\d{4}:\\d{2}:\\d{2} \\d{2}:\\d{2}:\\d{2}");
+        if (iso8601Pattern.matcher(str).matches())
+            try {
+                return Timestamp.from(OffsetDateTime.parse(str).toInstant());
+            } catch (Exception e) {
+                throw new RuntimeException("parsing String to TimeStamp error");
+            }
+        else if (defaltPattern.matcher(str).matches())
+            return convertStringToTimestamp(str, "yyyy:MM:dd HH:mm:ss");
+        return null;
     }
 }
