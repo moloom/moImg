@@ -30,6 +30,11 @@ public class ImgCameraInfo {
     private String make;        //摄像头品牌
     private String model;       //摄像头型号
     private String software;    //固件 Firmware 版本或者编辑软件
+    private String documentarySoftware;     //文档生成程序
+    private String artist;      //艺人
+    private String title;       //标题
+    private String keywords;    //关键词,有多个
+    private String copyright;       //版权
     private String orientation;     //旋转角度
     private Double xResolution;     //水平分辨率
     private Double yResolution;     //垂直分辨率
@@ -91,6 +96,13 @@ public class ImgCameraInfo {
             this.setSoftware(metadata.get("Version"));
         else if (metadata.get("Firmware Version") != null)
             this.setSoftware(metadata.get("Firmware Version"));
+        if (metadata.get("tiff:Software") != null)
+            this.setDocumentarySoftware(metadata.get("tiff:Software"));
+        else if (metadata.get("Exif IFD0:Software") != null)
+            this.setDocumentarySoftware(metadata.get("Exif IFD0:Software"));
+        this.setArtist(metadata.get("Exif IFD0:Artist"));
+        this.setTitle(metadata.get("dc:title"));
+        this.setCopyright(metadata.get("Exif IFD0:Copyright"));
         this.setOrientation(metadata.get("tiff:Orientation"));
         if (metadata.get("tiff:XResolution") != null)
             this.setXResolution(Double.valueOf(metadata.get("tiff:XResolution")));
@@ -131,7 +143,10 @@ public class ImgCameraInfo {
         this.setDateTimeOriginal(convertStringToTimestamp(metadata.get("Exif SubIFD:Date/Time Original")));
         if (metadata.get("Exif SubIFD:Sub-Sec Time Original") != null)
             this.setSubsecTimeOriginal(Integer.valueOf(metadata.get("Exif SubIFD:Sub-Sec Time Original")));
-        this.setDateTimeDigitized(convertStringToTimestamp(metadata.get("Exif SubIFD:Date/Time Digitized")));
+        if (metadata.get("Exif SubIFD:Date/Time Digitized") != null)
+            this.setDateTimeDigitized(convertStringToTimestamp(metadata.get("Exif SubIFD:Date/Time Digitized")));
+        else if (metadata.get("Exif IFD0:Date/Time") != null)
+            this.setDateTimeDigitized(convertStringToTimestamp(metadata.get("Exif IFD0:Date/Time"), "yyyy:MM:ddTHH:mm:ss.M"));
         if (metadata.get("Exif SubIFD:Sub-Sec Time Digitized") != null)
             this.setSubsecTimeDigitized(Integer.valueOf(metadata.get("Exif SubIFD:Sub-Sec Time Digitized")));
 
