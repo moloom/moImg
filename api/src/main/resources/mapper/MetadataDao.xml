@@ -2,15 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.moloom.img.api.dao.ImgCameraInfoDao">
+<mapper namespace="com.moloom.img.api.dao.MetadataDao">
 
     <!-- 插入数据 -->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="imgCameraInfoId"
-            parameterType="com.moloom.img.api.entity.ImgInfo">
-        insert into img_camera_info (image_description,
+    <insert id="insert" useGeneratedKeys="true" keyProperty="metadataId"
+            parameterType="com.moloom.img.api.entity.MetadataEntity">
+        insert into img_camera_info (description,
                                      make,
                                      model,
                                      software,
+                                     documentary_software,
+                                     artist,
+                                     title,
+                                     keywords,
+                                     copyright,
                                      orientation,
                                      x_resolution,
                                      y_resolution,
@@ -46,9 +51,14 @@
                                      date_time_digitized,
                                      subsec_time_digitized,
                                      created_by)
-        values (#{imageDescription},
+        values (#{description},
                 #{make}, #{model},
                 #{software},
+                #{documentarySoftware},
+                #{artist},
+                #{title},
+                #{keywords},
+                #{copyright},
                 #{orientation},
                 #{xResolution},
                 #{yResolution},
@@ -87,11 +97,11 @@
     </insert>
 
     <!-- 更新数据 -->
-    <update id="update" parameterType="com.moloom.img.api.entity.ImgCameraInfo">
-        UPDATE img_camera_info
+    <update id="update" parameterType="com.moloom.img.api.entity.MetadataEntity">
+        UPDATE metadata
         <set>
-            <if test="imageDescription != null and imageDescription.trim() != ''">
-                image_description = #{imageDescription},
+            <if test="description != null and description.trim() != ''">
+                description = #{description},
             </if>
             <if test="make != null and make.trim() != ''">
                 make = #{make},
@@ -101,6 +111,21 @@
             </if>
             <if test="software != null and software.trim() != ''">
                 software = #{software},
+            </if>
+            <if test="documentarySoftware != null and documentarySoftware.trim() != ''">
+                documentary_software = #{documentarySoftware},
+            </if>
+            <if test="artist != null and artist.trim() != ''">
+                artist = #{artist},
+            </if>
+            <if test="title != null and title.trim() != ''">
+                title = #{title},
+            </if>
+            <if test="keywords != null and keywords.trim() != ''">
+                keywords = #{keywords},
+            </if>
+            <if test="copyright != null and copyright.trim() != ''">
+                copyright = #{copyright},
             </if>
             <if test="orientation != null and orientation.trim() != ''">
                 orientation = #{orientation},
@@ -208,7 +233,7 @@
                 created_by = #{createdBy}
             </if>
         </set>
-        WHERE img_camera_info_id = #{imgCameraInfoId}
+        WHERE metadata_id = #{metadataId}
 
     </update>
 

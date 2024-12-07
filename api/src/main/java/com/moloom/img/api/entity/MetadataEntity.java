@@ -24,9 +24,9 @@ import java.util.Date;
 @AllArgsConstructor
 @Accessors(chain = true)
 @Builder
-public class ImgCameraInfo {
-    private Long imgCameraInfoId; // 主键
-    private String imageDescription;    //图片描述
+public class MetadataEntity {
+    private Long metadataId; // 主键
+    private String description;    //图片描述
     private String make;        //摄像头品牌
     private String model;       //摄像头型号
     private String software;    //固件 Firmware 版本或者编辑软件
@@ -85,11 +85,11 @@ public class ImgCameraInfo {
      * @date 2024-11-17 23:04:00
      * @description 从 Metadata 对象提取信息
      */
-    public ImgCameraInfo fromMetadata(Metadata metadata) {
+    public MetadataEntity fromMetadata(Metadata metadata) {
         if (metadata == null)
             return null;
 
-        this.setImageDescription(metadata.get("Exif IFD0:Image Description"));
+        this.setDescription(metadata.get("Exif IFD0:Image Description"));
         this.setMake(metadata.get("tiff:Make"));
         this.setModel(metadata.get("Exif IFD0:Model"));
         if (metadata.get("Version") != null)
