@@ -1,8 +1,6 @@
 package com.moloom.img.api;
 
 import com.moloom.img.api.config.BucketConfig;
-import com.moloom.img.api.entity.ImgInfo;
-import com.moloom.img.api.entity.Tokens;
 import com.moloom.img.api.service.MinioService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -11,8 +9,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-
-import java.time.Duration;
 
 
 /**

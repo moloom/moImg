@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +36,9 @@ public class UploadDispatcherServiceImpl implements UploadDispatcherService {
     @Resource
     private VideoHandlerService videoHandlerService;
 
+    //redis中 token 的key前缀
+    @Resource
+    private String tokensPrefix;
 
     @Override
     public R uploadDispatcher(@NotNull UploadVo vo, MultipartFile[] multipartFiles) {
@@ -51,6 +53,10 @@ public class UploadDispatcherServiceImpl implements UploadDispatcherService {
         Tika tika = new Tika();
         ArrayList<R> handlerResult = new ArrayList<R>();
         log.info("number of upload file is {}", multipartFiles.length);
+
+        //TODO 获取上传用户的id,在TokensServiceImpl中实现，方法名 hasRegister()，若没注册则注册
+//        Tokens tokens = ((Tokens)redisTemplate.opsForValue().get(tokensPrefix + vo.getToken()));
+
         //开始处理每个上传的文件
         Arrays.stream(multipartFiles).forEach(file -> {
             //把文件信息存入单个vo

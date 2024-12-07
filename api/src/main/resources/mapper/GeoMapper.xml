@@ -5,7 +5,7 @@
 <mapper namespace="com.moloom.img.api.dao.GeoDao">
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="imgCameraInfoId"
-            parameterType="com.moloom.img.api.entity.Geo">
+            parameterType="com.moloom.img.api.entity.GeoEntity">
         INSERT INTO geo (location,
                          altitude,
                          altitude_ref,
@@ -26,7 +26,7 @@
                 #{updatedTime})
     </insert>
 
-    <update id="update" parameterType="com.moloom.img.api.entity.Geo">
+    <update id="update" parameterType="com.moloom.img.api.entity.GeoEntity">
         UPDATE geo
         <set>
             <if test="longitude != null and latitude != null">
@@ -55,7 +55,7 @@
     </update>
 
     <select id="selectOneById" parameterType="java.lang.Long"
-            resultType="com.moloom.img.api.entity.Geo">
+            resultType="com.moloom.img.api.entity.GeoEntity">
         SELECT geo_id,
                ST_X(location) AS longitude,
                ST_Y(location) AS latitude,

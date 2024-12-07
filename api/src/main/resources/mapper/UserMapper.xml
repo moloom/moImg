@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.moloom.img.api.dao.UsersDao">
 
-    <insert id="insertUser" parameterType="com.moloom.img.api.entity.Users">
+    <insert id="insertUser" parameterType="com.moloom.img.api.entity.UsersEntity">
         insert into users(name,
                           password,
                           email)
@@ -12,7 +12,7 @@
                 #{email})
     </insert>
 
-    <update id="updateUser" parameterType="com.moloom.img.api.entity.Users">
+    <update id="updateUser" parameterType="com.moloom.img.api.entity.UsersEntity">
         update users set
         <if test="name !=null and name !=''">
             name = #{name},

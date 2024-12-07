@@ -19,7 +19,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Accessors(chain = true)
 @Builder
-public class Geo {
+public class GeoEntity {
     private Long geoId;
     private Double latitude;         // 纬度
     private Double longitude;        // 经度
@@ -33,7 +33,7 @@ public class Geo {
     private Timestamp updatedTime;
 
     // 从Metadata对象中提取经纬度信息
-    public Geo fromMetadata(Metadata metadata) {
+    public GeoEntity fromMetadata(Metadata metadata) {
         if (metadata.get("GPS:GPS Longitude") != null && !metadata.get("GPS:GPS Longitude").isEmpty())
             this.setLongitude(pointToCoordinate(metadata.get("GPS:GPS Longitude")));
         if (metadata.get("GPS:GPS Latitude") != null && !metadata.get("GPS:GPS Latitude").isEmpty())

@@ -1,6 +1,6 @@
 package com.moloom.img.api.dao;
 
-import com.moloom.img.api.entity.Users;
+import com.moloom.img.api.entity.UsersEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -20,7 +20,7 @@ public interface UsersDao {
      * @description 登录
      */
     @Select("select * from where name=${name} and password=${password}")
-    public Users searchUserByNameAndPassword(Users user);
+    public UsersEntity searchUserByNameAndPassword(UsersEntity user);
 
     /**
      * @param token
@@ -30,7 +30,7 @@ public interface UsersDao {
      * @description 通过token查询用户
      */
     /*@Select("select * from where token=${token}")
-    public Users searchUserByToken(String token);*/
+    public UsersEntity searchUserByToken(String token);*/
 
     /**
      * @param user
@@ -39,7 +39,7 @@ public interface UsersDao {
      * @date 2024-10-13 00:16:27
      * @description 插入一条Users
      */
-    public int insertUser(Users user);
+    public int insertUser(UsersEntity user);
 
     /**
      * @param user 条件为id
@@ -48,7 +48,7 @@ public interface UsersDao {
      * @date 2024-10-13 00:17:53
      * @description 修改用户
      */
-    public int updateUser(Users user);
+    public int updateUser(UsersEntity user);
 
     /**
      * @param id

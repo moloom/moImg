@@ -18,7 +18,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Builder
 @Accessors(chain = true)
-public class ImgInfo {
+public class ImgEntity {
     private Long imgId;
     private String imgUrl;  //资源访问字符串
     private String originalFullName;

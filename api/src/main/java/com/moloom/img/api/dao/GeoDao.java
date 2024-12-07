@@ -1,9 +1,8 @@
 package com.moloom.img.api.dao;
 
-import com.moloom.img.api.entity.Geo;
+import com.moloom.img.api.entity.GeoEntity;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
 
 /**
  * @author: moloom
@@ -14,29 +13,29 @@ import org.apache.ibatis.annotations.Select;
 public interface GeoDao {
 
     /**
-     * @param geo
+     * @param geoEntity
      * @return
      * @author moloom
      * @date 2024-11-17 22:51:27
-     * @description insert a new record into Geo
+     * @description insert a new record into GeoEntity
      */
-    public int insert(Geo geo);
+    public int insert(GeoEntity geoEntity);
 
     /**
-     * @param geo
+     * @param geoEntity
      * @return
      * @author moloom
      * @date 2024-11-17 22:52:22
-     * @description update a record in Geo
+     * @description update a record in GeoEntity
      */
-    public int update(Geo geo);
+    public int update(GeoEntity geoEntity);
 
     /**
      * @param id
      * @return
      * @author moloom
      * @date 2024-11-17 22:52:56
-     * @description delete a record in Geo
+     * @description delete a record in GeoEntity
      */
     @Delete("DELETE FROM geo WHERE geo_id = #{id}")
     public int deleteById(Long id);
@@ -46,8 +45,8 @@ public interface GeoDao {
      * @return
      * @author moloom
      * @date 2024-11-17 22:53:46
-     * @description select a record in Geo
+     * @description select a record in GeoEntity
      */
-    public Geo selectOneById(Long id);
+    public GeoEntity selectOneById(Long id);
 
 }

@@ -5,16 +5,16 @@
 <mapper namespace="com.moloom.img.api.dao.TokensDao">
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="tokenId"
-            parameterType="com.moloom.img.api.entity.Tokens">
+            parameterType="com.moloom.img.api.entity.TokensEntity">
         INSERT INTO tokens (token,
                          status,
-                         created_by)
+                         token_id)
         VALUES (#{token},
                 #{status},
-                #{createdBy})
+                #{userId})
     </insert>
 
-    <update id="update" parameterType="com.moloom.img.api.entity.Tokens">
+    <update id="update" parameterType="com.moloom.img.api.entity.TokensEntity">
         UPDATE tokens
         <set>
             <if test="token != null and token != ''">
@@ -23,8 +23,8 @@
             <if test="status != null">
                 status = #{status},
             </if>
-            <if test="createdBy != null">
-                created_by = #{createdBy},
+            <if test="userId != null">
+                token_id = #{userId},
             </if>
         </set>
         WHERE token_id = #{tokenId}

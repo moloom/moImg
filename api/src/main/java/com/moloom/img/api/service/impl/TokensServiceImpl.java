@@ -1,12 +1,11 @@
 package com.moloom.img.api.service.impl;
 
 import com.moloom.img.api.dao.TokensDao;
-import com.moloom.img.api.entity.Tokens;
+import com.moloom.img.api.entity.TokensEntity;
 import com.moloom.img.api.service.TokensService;
 import com.moloom.img.api.to.R;
 import com.moloom.img.api.utils.MoUtils;
 import com.moloom.img.api.utils.StringGenerator;
-import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -57,17 +56,16 @@ public class TokensServiceImpl implements TokensService {
 
 
     @Override
-    public R register() {
+    public R registerInRedis() {
         String token;
         while (true) {
             // 生成一个token
             token = StringGenerator.getToken();
             // 先占坑，尝试在 Redis 中添加
             Boolean isSet = redisTemplate.opsForValue()
-                    .setIfAbsent(tokensPrefix + token, Tokens.builder()
+                    .setIfAbsent(tokensPrefix + token, TokensEntity.builder()
                             .token(token)
                             .status((byte) 1)
-                            .createdBy(1L)
                             .build(), Duration.ofDays(3l));
             // 验证token是否已被注册，如果已被注册，则重新生成一个
             if (Boolean.TRUE.equals(isSet)) {

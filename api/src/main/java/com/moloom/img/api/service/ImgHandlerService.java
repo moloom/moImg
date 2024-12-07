@@ -1,6 +1,6 @@
 package com.moloom.img.api.service;
 
-import com.moloom.img.api.entity.ImgInfo;
+import com.moloom.img.api.entity.ImgEntity;
 import com.moloom.img.api.vo.DownloadVO;
 import com.moloom.img.api.to.R;
 import com.moloom.img.api.vo.UploadVo;
@@ -30,7 +30,7 @@ public interface ImgHandlerService {
      * @date 2024-10-22 18:41:09
      * @description 保存图片
      */
-    public R saveImg(ImgInfo img);
+    public R saveImg(ImgEntity img);
 
     /**
      * @param vo vo

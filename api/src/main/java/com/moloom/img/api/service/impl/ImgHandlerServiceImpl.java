@@ -1,11 +1,11 @@
 package com.moloom.img.api.service.impl;
 
 import com.moloom.img.api.config.BucketConfig;
-import com.moloom.img.api.dao.ImgCameraInfoDao;
+import com.moloom.img.api.dao.MetadataDao;
 import com.moloom.img.api.dao.ImgInfoDao;
-import com.moloom.img.api.entity.ImgCameraInfo;
+import com.moloom.img.api.entity.ImgEntity;
+import com.moloom.img.api.entity.MetadataEntity;
 import com.moloom.img.api.entity.ImgCategory;
-import com.moloom.img.api.entity.ImgInfo;
 import com.moloom.img.api.service.ImgHandlerService;
 import com.moloom.img.api.service.VideoHandlerService;
 import com.moloom.img.api.to.Buckets;
@@ -59,7 +59,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
     private ImgInfoDao imgInfoDao;
 
     @Resource
-    private ImgCameraInfoDao imgCameraInfoDao;
+    private MetadataDao metadataDao;
 
     @Value("${moimg.upload.upload-root-path}")
     private String prePath;
@@ -75,6 +75,11 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
     private String imgInfoPrefix;
 
 
+    /**
+     * @author moloom
+     * @date 2024-10-31 02:11:28
+     * @description init arg imgBucket from bucketConfig
+     */
     @PostConstruct
     public void initImgBucket() {
         if (bucketConfig == null || bucketConfig.getBuckets() == null || bucketConfig.getBuckets().size() == 0) {
@@ -90,15 +95,15 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
      * @return
      * @author moloom
      * @date 2024-11-23 16:32:03
-     * @description preload ImgInfo to redis
+     * @description preload ImgEntity to redis
      */
-    @PostConstruct
+//    @PostConstruct
     public void preloadImgInfoToRedis() {
         // 从数据库拉取所有数据
-        List<ImgInfo> imgInfos = imgInfoDao.getAllImgInfos();
-        imgInfos.forEach(imgInfo -> {
+        List<ImgEntity> imgEntities = imgInfoDao.getAllImgInfos();
+        imgEntities.forEach(imgEntity -> {
             // 将imgInfo对象存储到redis中，key为imgUrl，value为imgInfo对象，保存 14+-7 天
-            redisTemplate.opsForValue().set(imgInfoPrefix + imgInfo.getImgUrl(), imgInfo, Duration.ofDays(MoUtils.randomDays(14)));
+            redisTemplate.opsForValue().set(imgInfoPrefix + imgEntity.getImgUrl(), imgEntity, Duration.ofDays(MoUtils.randomDays(14)));
         });
     }
 
@@ -136,7 +141,6 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
                 filename = filename.substring(0, lastIndexOf);
             vo.setFileName(filename);
         }
-        log.info("fileUploadVo.getMultipartFile().getOriginalFilename()文件名::{}", vo.getMultipartFile().getOriginalFilename());
         //设置存储bucket名称
         vo.setBucketName(imgBucket.getBucketName());
         //拼接存储路径，路径格式 {token}/{originalName}_{imgCategory}{extension}
@@ -150,10 +154,12 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         vo.setFileStoragePath(imgStoragePath.toString());
 
         log.info("file info ::{}", vo.toString());
-        //--------------------------------存储img到minIO，异步处理(X)-------------------------------------
+        //存储img到minIO，
+        // TODO 异步处理(X)
         ObjectWriteResponse response = minioService.putObject(vo);
-        log.info("ObjectWriteResponse::{}\n={}\n={}\n={}\n={}", response.etag(), response.bucket(), response.versionId(), response.object(), response.headers());
-        //--------------------------------获取img元数据，保存到数据库，异步处理(X)-------------------------------------
+        log.info("Etag={}", response.etag());
+        //获取img元数据，保存到数据库
+        //TODO 异步处理(X)
         //初始化解析元数据要用到的对象
         Metadata metadata = new Metadata();
         Parser parser = new AutoDetectParser();
@@ -165,28 +171,28 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         } catch (Exception e) {
             throw new RuntimeException("parse the images error");
         }
-        log.info("元信息获取::{}", handler.toString());
+        log.info("元信息获取");
         //getting the list of all metadata elements
         String[] metadataNames = metadata.names();
-        log.info("\n\n");
-            /*for (String name : metadataNames) {
-                log.info("{}==={}", name, metadata.get(name));
-            }*/
+        for (String name : metadataNames) {
+            log.info("{}->{}", name, metadata.get(name));
+        }
 
-        //摄像头元信息插入到数据库
+        //TODO 元信息插入到数据库
 
-        //还有很多值像createdBy等都没插入进去!!!!!!!!!!!!!!!!!!!!!
-        ImgCameraInfo imgCameraInfo = ImgCameraInfo.builder().build().fromMetadata(metadata);
-        log.info(imgCameraInfo.toString());
-        return R.success();
-/*
-        int flag = imgCameraInfoDao.insert(imgCameraInfo);
+        //TODO 还有很多值像 userId 等都没插入进去!!!!!!!!!!!!!!!!!!!!!
+        //提取元信息并封装到 MetadataEntity 对象
+        MetadataEntity metadataEntity = MetadataEntity.builder().createdBy(vo.getToken().getUserId()).build().fromMetadata(metadata);
+        log.info(metadataEntity.toString());
+
+        /*int flag = imgCameraInfoDao.insert(imgCameraInfo);
         if (flag > 0)
             log.info("imgCameraInfo插入成功");
         else
-            log.info("imgCameraInfo插入失败");
+            log.info("imgCameraInfo插入失败");*/
+        //
         //插入图片信息到数据库
-        ImgInfo img = ImgInfo.builder()
+        ImgEntity img = ImgEntity.builder()
                 .imgUrl(StringGenerator.getURL())
                 .originalFullName(vo.getFileName() + vo.getFileExtension())
                 .storageFullName(imgStoragePath.substring(imgStoragePath.indexOf("/") + 1, imgStoragePath.length()))
@@ -194,18 +200,22 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
                 .size(vo.getMultipartFile().getSize())
                 .extension(vo.getFileExtension())
                 .contentType(vo.getContentType())
-                .token(vo.getToken())
+                .token(vo.getToken().getToken())
                 .imgCategory(ImgCategory.SOURCE)
-                .width(imgCameraInfo.getWidth())
+                .width(metadataEntity.getWidth())
+                .length(metadataEntity.getLength())
+                .metadataId(metadataEntity.getMetadataId())
+                .createdBy(vo.getToken().getUserId())
+                // TODO originalCreatedTime 和 originalModifiedTime 由前端获取，等写页面时再赋值
                 .build();
-        int imgAffected = imgInfoDao.insert(img);
+//        int imgAffected = imgInfoDao.insert(img);
+        log.info(img.toString());
 
-
-        return R.success().setData(img.getImgUrl());*/
+        return R.success().setData(img.getImgUrl());
     }
 
     @Override
-    public R saveImg(ImgInfo img) {
+    public R saveImg(ImgEntity img) {
         /*ObjectWriteResponse flag = minioClient.putObject(PutObjectArgs.builder()
                 .bucket("img")
                 .stream(multipartFile.getInputStream(), multipartFile.getSize(), -1).object("/1/2/3/4.jpg")
@@ -224,56 +234,57 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
             return ResponseEntity.badRequest().body(R.error(HttpStatus.BAD_REQUEST, "invalid params"));
 
         String key = imgInfoPrefix + vo.getUrl();
-        //get ImgInfo obj
-        ImgInfo imgInfo;
+        //get ImgEntity obj
+        //TODO 考虑用redis锁
+        ImgEntity imgEntity;
         if (redisTemplate.hasKey(key)) {
-            imgInfo = (ImgInfo) redisTemplate.opsForValue().get(key);
+            imgEntity = (ImgEntity) redisTemplate.opsForValue().get(key);
         } else {
             //if not exists in redis, search to db
             synchronized (key.intern()) {
                 log.debug("get lock of {}", key);
                 //拿到锁后再判断一次数据有没有存在。避免有多个请求在wait,而第一个请求拿到锁后，后面的请求又去db查询
                 if (redisTemplate.hasKey(key)) {
-                    imgInfo = (ImgInfo) redisTemplate.opsForValue().get(key);
+                    imgEntity = (ImgEntity) redisTemplate.opsForValue().get(key);
                 } else {
                     log.debug("search to db");
-                    imgInfo = imgInfoDao.selectOneByImgUrl(vo.getUrl());
+                    imgEntity = imgInfoDao.selectOneByImgUrl(vo.getUrl());
                     //db也没数据时，存一个值为null的keys进去，失效 1 分钟，防止缓存穿透
-                    if (imgInfo == null) {
+                    if (imgEntity == null) {
                         log.debug("set a key {} with value is null", key);
                         redisTemplate.opsForValue().set(key, null, Duration.ofMinutes(1L));
                     } else
                         //有效数据缓存到redis
-                        redisTemplate.opsForValue().set(key, imgInfo, Duration.ofDays(10L));
+                        redisTemplate.opsForValue().set(key, imgEntity, Duration.ofDays(10L));
                 }
             }
         }
         //return 404 when img not founded
-        if (imgInfo == null)
+        if (imgEntity == null)
             return ResponseEntity.badRequest().body(R.error(HttpStatus.NOT_FOUND));
 
-        vo.setStoragePath(imgInfo.getStoragePath());
+        vo.setStoragePath(imgEntity.getStoragePath());
 
         //设置bucket
         vo.setBucketName(imgBucket.getBucketName());
-        log.info(imgInfo.toString());
+        log.info(imgEntity.toString());
         log.info(vo.toString());
         //获取文件流
         InputStreamResource inputStream = new InputStreamResource(minioService.getObject(vo));
 
         HttpHeaders headers = new HttpHeaders();
         //设置浏览器处理图片的方式，默认是 attachment 下载。并设置文件名
-        headers.setContentDisposition(ContentDisposition.inline().filename(imgInfo.getOriginalFullName()).build());
+        headers.setContentDisposition(ContentDisposition.inline().filename(imgEntity.getOriginalFullName()).build());
         //设置当前时间
         headers.setDate(new Date().getTime());
         //设置缓存时间 30 天
         headers.setCacheControl(CacheControl.maxAge(Duration.ofDays(30)).cachePublic());
         //设置最后修改时间
-        headers.setLastModified(imgInfo.getUpdatedTime().getTime());
+        headers.setLastModified(imgEntity.getUpdatedTime().getTime());
         return ResponseEntity.ok()
                 .headers(headers)
-                .contentLength(imgInfo.getSize())
-                .contentType(MediaType.parseMediaType(imgInfo.getContentType()))
+                .contentLength(imgEntity.getSize())
+                .contentType(MediaType.parseMediaType(imgEntity.getContentType()))
                 .body(inputStream);
     }
 }

@@ -6,9 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.sql.Timestamp;
+
 /**
  * @author: moloom
- * @date: 2024-10-12 23:37
+ * @date: 2024-10-12 23:38
  * @description:
  */
 @Data
@@ -16,7 +18,10 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Builder
 @Accessors(chain = true)
-public class Tag {
+public class FileTagEntity {
+    private Long id;
+    private Long fileId;
     private Long tagId;
-    private String tagName;
+    private Long createdBy;
+    private Timestamp createdTime;
 }

@@ -4,7 +4,7 @@
 <mapper namespace="com.moloom.img.api.dao.ImgInfoDao">
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="imgCameraInfoId"
-            parameterType="com.moloom.img.api.entity.ImgInfo">
+            parameterType="com.moloom.img.api.entity.ImgEntity">
         insert into img_info(img_url,
                              original_full_name,
                              storage_full_name,
@@ -41,7 +41,7 @@
                 #{latestViewTime})
     </insert>
 
-    <update id="update" parameterType="com.moloom.img.api.entity.ImgInfo">
+    <update id="update" parameterType="com.moloom.img.api.entity.ImgEntity">
         UPDATE img_info
         <set>
             <if test="imgUrl != null and imgUrl != ''">

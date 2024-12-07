@@ -15,7 +15,7 @@ public interface TokensService {
      * @date 2024-11-27 16:26:08
      * @description register a token and return it
      */
-    public R register();
+    public R registerInRedis();
 
     /**
      * @param token
