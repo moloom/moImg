@@ -1,5 +1,6 @@
 package com.moloom.img.api.controller;
 
+import com.moloom.img.api.entity.Tokens;
 import com.moloom.img.api.service.ImgHandlerService;
 import com.moloom.img.api.service.UploadDispatcherService;
 import com.moloom.img.api.vo.DownloadVO;
@@ -55,7 +56,9 @@ public class UpDownLoadController {
         log.info("X-real-ip:{}", request.getHeader("X-Real-IP"));
 
         return uploadDispatcherService.uploadDispatcher(UploadVo.builder()
-                .token(token)
+                .token(Tokens.builder()
+                        .token(token)
+                        .build())
                 .actionsVo(actionsVo)
                 .build(), multipartFiles);
     }
