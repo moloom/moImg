@@ -1,5 +1,6 @@
 package com.moloom.img.api.vo;
 
+import com.moloom.img.api.entity.Tokens;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -20,7 +21,7 @@ public class UploadVo implements Cloneable {
     private String fileStoragePath;  //存储路径
     private String bucketName;  //存储的bucket名
     private MultipartFile multipartFile;
-    private String token;
+    private Tokens token;
     private ImgActionsVo actionsVo;
 
     @Override
