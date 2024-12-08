@@ -20,7 +20,7 @@ spring:
           min-idle: 0         #连接词最小空闲连接数
           max-wait: -1ms      #连接池最大阻塞等待实践，负值表示没有限制
 moimg:
-  host: "https://img.moloom.cn}"    # 当前系统的域名，生成图片连接时会用到
+  host: "https://img.moloom.cn"    # 当前系统的域名，生成图片连接时会用到
 
 minio:
   server:
