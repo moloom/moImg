@@ -4,51 +4,35 @@
 <mapper namespace="com.moloom.img.api.dao.UsersDao">
 
     <insert id="insertUser" parameterType="com.moloom.img.api.entity.UsersEntity">
-        insert into users(name,
+        insert into users(username,
                           password,
                           email)
-        values (#{name},
+        values (#{username},
                 #{password},
                 #{email})
     </insert>
 
     <update id="updateUser" parameterType="com.moloom.img.api.entity.UsersEntity">
         update users set
-        <if test="name !=null and name !=''">
-            name = #{name},
+        <if test="username !=null and username !=''">
+            username = #{username},
         </if>
         <if test="password !=null and password !=''">
             password = #{password},
         </if>
-        <if test="sex !=null">
-            sex = #{sex},
-        </if>
-        <if test="role !=null">
-            role = #{role},
-        </if>
-        <if test="birthday !=null">
-            birthday = #{birthday},
-        </if>
         <if test="email !=null and email !=''">
             email = #{email},
         </if>
-        <if test="email_status !=null">
-            email_status = #{email_status},
+        <if test="email_active !=null">
+            email_active = #{emailActive},
         </if>
-        <if test="point !=null">
-            point = #{point},
+        <if test="status !=null">
+            status = #{status},
         </if>
-        <if test="verify_code !=null and verify_code !=''">
-            verify_code = #{verify_code},
+        <if test="latest_logged_time !=null">
+            latest_logged_time = #{latestLoggedTime},
         </if>
-        <if test="prefer_language !=null">
-            prefer_language = #{prefer_language},
-        </if>
-        <if test="picture !=null and picture !=''">
-            picture = #{picture},
-        </if>
-        modify_time=now()
-        where id=#{id}
+        where user_id=#{userId}
     </update>
 
 
