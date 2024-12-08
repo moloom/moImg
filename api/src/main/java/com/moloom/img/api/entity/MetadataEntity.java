@@ -136,7 +136,10 @@ public class MetadataEntity {
         this.setWhiteBalance(metadata.get("Exif SubIFD:White Balance Mode"));
         if (metadata.get("Exif SubIFD:Brightness Value") != null)
             this.setBrightness(Float.valueOf(metadata.get("Exif SubIFD:Brightness Value")));
-        this.setFocalLength(metadata.get("Exif SubIFD:Focal Length"));
+        if (metadata.get("Exif SubIFD:Focal Length") != null)
+            this.setFocalLength(metadata.get("Exif SubIFD:Focal Length"));
+        else if (metadata.get("exif:FocalLength") != null)
+            this.setFocalLength(metadata.get("exif:FocalLength"));
         this.setFocalLength35(metadata.get("Exif SubIFD:Focal Length 35"));
         this.setFlash(metadata.get("Exif SubIFD:Flash"));
         if (metadata.get("exif:Flash") != null)
