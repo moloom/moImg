@@ -41,7 +41,7 @@ public interface ImgDao {
      * @date 2024-11-01 01:12:30
      * @description delete a record by img_id
      */
-    @Delete("DELETE FROM img_info WHERE img_id = #{imgId}")
+    @Delete("DELETE FROM img WHERE img_id = #{imgId}")
     int deleteById(Long imgId);
 
     /**
@@ -51,8 +51,8 @@ public interface ImgDao {
      * @date 2024-11-23 22:47:40
      * @description select all imgInfo
      */
-    @Select("SELECT * FROM img_info")
-    List<ImgEntity> getAllImgInfos();
+    @Select("SELECT * FROM img")
+    List<ImgEntity> getAllImg();
 
     /**
      * @param imgId the id of img
@@ -61,7 +61,7 @@ public interface ImgDao {
      * @date 2024-11-01 01:20:59
      * @description select one record by img_id
      */
-    @Select("SELECT * FROM img_info WHERE img_id = #{imgId}")
+    @Select("SELECT * FROM img WHERE img_id = #{imgId}")
     ImgEntity selectOneByImgId(Long imgId);
 
     /**
@@ -71,7 +71,7 @@ public interface ImgDao {
      * @date 2024-11-23 22:52:16
      * @description select one record by img_url
      */
-    @Select("SELECT * FROM img_info WHERE img_url = #{imgUrl}")
+    @Select("SELECT * FROM img WHERE img_url = #{imgUrl}")
     ImgEntity selectOneByImgUrl(String imgUrl);
 
 
