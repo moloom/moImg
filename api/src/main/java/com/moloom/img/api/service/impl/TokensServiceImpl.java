@@ -8,8 +8,10 @@ import com.moloom.img.api.utils.MoUtils;
 import com.moloom.img.api.utils.StringGenerator;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.Map;
@@ -70,7 +72,7 @@ public class TokensServiceImpl implements TokensService {
             // 验证token是否已被注册，如果已被注册，则重新生成一个
             if (Boolean.TRUE.equals(isSet)) {
                 // 若 token 已存在数据库中，则删除 Redis 锁，重新生成一个
-                if (this.isExist(token))
+                if (this.isExistInDB(token))
                     // 删除 Redis 锁
                     redisTemplate.delete(tokensPrefix + token);
                 else
@@ -79,10 +81,42 @@ public class TokensServiceImpl implements TokensService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class, timeout = 5)
     @Override
-    public boolean isExist(String token) {
+    public void ensureTokenStoredAndCorrectStatus(@NotNull TokensEntity token) throws Exception {
+        //查DB是否存在，不存在则插入
+        if (!this.isExistInDB(token.getToken()))
+            tokensDao.insert(token);
+        //修改 status 为 2
+        if (token.getStatus() < 2)
+            tokensDao.update(token.setStatus((byte) 2));
+        //remove current token from redis.
+        redisTemplate.delete(tokensPrefix + token.getToken());
+    }
+
+    @Override
+    public boolean isExistInDB(String token) {
         if (token == null || token.isBlank())
             return false;
         return tokensDao.selectOneByToken(token) == null ? false : true;
+    }
+
+    @Override
+    public boolean checkAndCacheToken(String token) {
+        if (token == null || !StringGenerator.validateToken(token))
+            return false;
+        TokensEntity tokensEntity;
+        //查看 redis 中是否有 token
+        tokensEntity = (TokensEntity) redisTemplate.opsForValue().get(tokensPrefix + token);
+        if (tokensEntity == null)
+            //若 redis 里不存在，则查 DB
+            tokensEntity = tokensDao.selectOneByToken(token);
+        //若已过期，或不存在，则返回 false
+        if (tokensEntity == null || tokensEntity.getStatus() == 0)
+            return false;
+        //若存在，则更新 cache 过期时间为 status*8 天
+        redisTemplate.opsForValue().set(tokensPrefix + token, tokensEntity, Duration.ofDays(tokensEntity.getStatus() << 3));
+        //token 正常，返回true
+        return true;
     }
 }
