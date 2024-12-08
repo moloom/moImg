@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.Duration;
+
 
 /**
  * @author: moloom
@@ -46,8 +48,9 @@ public class UpDownLoadController {
                     @PathVariable("token") String token, ImgActionsVo actionsVo,
                     HttpServletRequest request) {
 
-        //check token is valid and registered
-        if (!StringGenerator.validateToken(token) || !redisTemplate.hasKey(tokensPrefix + token))
+        //check token is valid and registered.
+        //if the token is already in Redis, its expiration time will be extended. Otherwise, an error will be returned.
+        if (!StringGenerator.validateToken(token) || !redisTemplate.expire(tokensPrefix + token, Duration.ofMinutes(10)))
             return R.error(HttpStatus.BAD_REQUEST, "token is illegal");
 
         //打印所有的参数
@@ -56,9 +59,7 @@ public class UpDownLoadController {
         log.info("X-real-ip:{}", request.getHeader("X-Real-IP"));
 
         return uploadDispatcherService.uploadDispatcher(UploadVo.builder()
-                .token(TokensEntity.builder()
-                        .token(token)
-                        .build())
+                .token((TokensEntity) redisTemplate.opsForValue().get(tokensPrefix + token))
                 .actionsVo(actionsVo)
                 .build(), multipartFiles);
     }
