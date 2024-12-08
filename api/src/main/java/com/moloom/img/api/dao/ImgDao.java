@@ -13,7 +13,7 @@ import java.util.List;
  * @description: img database operation
  */
 @Mapper
-public interface ImgInfoDao {
+public interface ImgDao {
 
     /**
      * @param imgEntity

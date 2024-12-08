@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.moloom.img.api.dao.ImgInfoDao">
+<mapper namespace="com.moloom.img.api.dao.ImgDao">
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="imgCameraInfoId"
             parameterType="com.moloom.img.api.entity.ImgEntity">
-        insert into img_info(img_url,
-                             original_full_name,
-                             storage_full_name,
-                             storage_path,
-                             size,
-                             extension,
-                             content_type,
-                             token,
-                             width,
-                             length,
-                             img_category,
-                             img_camera_info_id,
-                             geoId,
-                             original_created_time,
-                             original_updated_time,
-                             created_by,
-                             latest_view_time)
+        insert into img(img_url,
+                        original_full_name,
+                        storage_full_name,
+                        storage_path,
+                        size,
+                        extension,
+                        content_type,
+                        token,
+                        width,
+                        length,
+                        img_category,
+                        metadata_id,
+                        geo_id,
+                        original_created_time,
+                        original_updated_time,
+                        created_by,
+                        latest_view_time)
         values (#{imgUrl},
                 #{originalFullName},
                 #{storageFullName},
@@ -33,7 +33,7 @@
                 #{width},
                 #{length},
                 #{imgCategory},
-                #{imgCameraInfoId},
+                #{metadataId},
                 #{geoId},
                 #{originalCreatedTime},
                 #{originalUpdatedTime},
@@ -42,7 +42,7 @@
     </insert>
 
     <update id="update" parameterType="com.moloom.img.api.entity.ImgEntity">
-        UPDATE img_info
+        UPDATE img
         <set>
             <if test="imgUrl != null and imgUrl != ''">
                 img_url = #{imgUrl},
@@ -77,11 +77,11 @@
             <if test="imgCategory != null">
                 img_category = #{imgCategory},
             </if>
-            <if test="cameraInfo != null">
-                img_camera_info_id = #{imgCameraInfoId},
+            <if test="metadataId != null">
+                metadata_id = #{metadataId},
             </if>
             <if test="geoId != null">
-                geoId = #{geoId},
+                geo_id = #{geoId},
             </if>
             <if test="originalCreatedTime != null">
                 original_created_time = #{originalCreatedTime},
