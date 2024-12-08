@@ -7,7 +7,7 @@
     <!-- 插入数据 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="metadataId"
             parameterType="com.moloom.img.api.entity.MetadataEntity">
-        insert into img_camera_info (description,
+        insert into metadata (description,
                                      make,
                                      model,
                                      software,
