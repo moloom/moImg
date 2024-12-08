@@ -18,7 +18,8 @@ spring:
           max-idle: 8         #连接池最大空闲数
           min-idle: 0         #连接词最小空闲连接数
           max-wait: -1ms      #连接池最大阻塞等待实践，负值表示没有限制
-
+moimg:
+  host: "http://localhost:${server.port}}"    # 当前系统的域名，生成图片连接时会用到
 
 minio:
   server:
