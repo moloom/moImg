@@ -24,7 +24,7 @@
                 status = #{status},
             </if>
             <if test="userId != null">
-                token_id = #{userId},
+                user_id = #{userId},
             </if>
         </set>
         WHERE token_id = #{tokenId}
