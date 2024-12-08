@@ -2,6 +2,7 @@ package com.moloom.img.api.controller;
 
 import com.moloom.img.api.entity.TokensEntity;
 import com.moloom.img.api.service.ImgHandlerService;
+import com.moloom.img.api.service.TokensService;
 import com.moloom.img.api.service.UploadDispatcherService;
 import com.moloom.img.api.vo.DownloadVO;
 import com.moloom.img.api.to.R;
@@ -39,6 +40,9 @@ public class UpDownLoadController {
     @Resource
     private ImgHandlerService imgHandlerService;
 
+    @Resource
+    private TokensService tokensService;
+
     //redis中 token 的key前缀
     @Resource
     private String tokensPrefix;
@@ -50,7 +54,7 @@ public class UpDownLoadController {
 
         //check token is valid and registered.
         //if the token is already in Redis, its expiration time will be extended. Otherwise, an error will be returned.
-        if (!StringGenerator.validateToken(token) || !redisTemplate.expire(tokensPrefix + token, Duration.ofMinutes(10)))
+        if (!tokensService.checkAndCacheToken(token))
             return R.error(HttpStatus.BAD_REQUEST, "token is illegal");
 
         //打印所有的参数

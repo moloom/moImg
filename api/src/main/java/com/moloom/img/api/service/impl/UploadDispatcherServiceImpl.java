@@ -1,5 +1,6 @@
 package com.moloom.img.api.service.impl;
 
+import com.moloom.img.api.dao.TokensDao;
 import com.moloom.img.api.exception.BadRequestException;
 import com.moloom.img.api.exception.ExtensionMismatchException;
 import com.moloom.img.api.service.*;
@@ -9,6 +10,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -36,9 +38,8 @@ public class UploadDispatcherServiceImpl implements UploadDispatcherService {
     @Resource
     private VideoHandlerService videoHandlerService;
 
-    //redis中 token 的key前缀
     @Resource
-    private String tokensPrefix;
+    private TokensService tokensService;
 
     @Override
     public R uploadDispatcher(@NotNull UploadVo vo, MultipartFile[] multipartFiles) {
@@ -51,11 +52,8 @@ public class UploadDispatcherServiceImpl implements UploadDispatcherService {
          */
 
         Tika tika = new Tika();
-        ArrayList<R> handlerResult = new ArrayList<R>();
+        ArrayList<R> handledResult = new ArrayList<R>();
         log.info("number of upload file is {}", multipartFiles.length);
-
-        //TODO 获取上传用户的id,在TokensServiceImpl中实现，方法名 hasRegister()，若没注册则注册
-//        Tokens tokens = ((Tokens)redisTemplate.opsForValue().get(tokensPrefix + vo.getToken()));
 
         //开始处理每个上传的文件
         Arrays.stream(multipartFiles).forEach(file -> {
@@ -80,21 +78,29 @@ public class UploadDispatcherServiceImpl implements UploadDispatcherService {
 
             //匹配文件类型对应的处理方法
             if (uploadVo.getContentType().startsWith("image/"))
-                handlerResult.add(imgHandlerService.imghandler(uploadVo));
+                handledResult.add(imgHandlerService.imghandler(uploadVo));
             else if (uploadVo.getContentType().startsWith("video/"))
-                handlerResult.add(videoHandlerService.videoHandler(uploadVo));
+                handledResult.add(videoHandlerService.videoHandler(uploadVo));
             else if (uploadVo.getContentType().equals("application/octet-stream"))
                 //未上传文件的处理
                 throw new BadRequestException("file not upload");
             else if (uploadVo.getContentType().startsWith("application/")) {
-                handlerResult.add(archiveHandler(uploadVo));
+                handledResult.add(archiveHandler(uploadVo));
             } else throw new ExtensionMismatchException();
         });
 
+        // 确保token在DB,且修改token状态
+        try {
+            tokensService.ensureTokenStoredAndCorrectStatus(vo.getToken());
+        } catch (Exception e) {
+            //TODO 执行回滚操作：把存储的文件删除，删除DB中插入的数据
+            throw new RuntimeException(e);
+        }
         //检查处理结果，如果全成功则返回成功，否则返回失败。且都返回每个文件的处理结果
-        boolean b = handlerResult.stream().allMatch(r -> r.getStatus() == HttpStatus.OK.value());
-        System.out.println("上传结果:"+b);
-        return R.success();
+        boolean b = handledResult.stream().allMatch(r -> r.getStatus() == HttpStatus.OK.value());
+        //TODO 还要添加一种错误码用于处理多文件上传时不全部成功的情况
+        System.out.println("updated result:" + b);
+        return R.success().setData(handledResult);
     }
 
     @Override

@@ -2,12 +2,11 @@ package com.moloom.img.api.service.impl;
 
 import com.moloom.img.api.config.BucketConfig;
 import com.moloom.img.api.dao.MetadataDao;
-import com.moloom.img.api.dao.ImgInfoDao;
+import com.moloom.img.api.dao.ImgDao;
 import com.moloom.img.api.entity.ImgEntity;
 import com.moloom.img.api.entity.MetadataEntity;
 import com.moloom.img.api.entity.ImgCategory;
 import com.moloom.img.api.service.ImgHandlerService;
-import com.moloom.img.api.service.VideoHandlerService;
 import com.moloom.img.api.to.Buckets;
 import com.moloom.img.api.utils.MoUtils;
 import com.moloom.img.api.vo.DownloadVO;
@@ -25,6 +24,7 @@ import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,10 +53,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
     private MinioServiceImpl minioService;
 
     @Resource
-    private VideoHandlerService videoHandlerService;
-
-    @Resource
-    private ImgInfoDao imgInfoDao;
+    private ImgDao imgDao;
 
     @Resource
     private MetadataDao metadataDao;
@@ -74,6 +71,9 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
     @Resource
     private String imgInfoPrefix;
 
+    @Resource
+    private String serverHost;
+
 
     /**
      * @author moloom
@@ -82,7 +82,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
      */
     @PostConstruct
     public void initImgBucket() {
-        if (bucketConfig == null || bucketConfig.getBuckets() == null || bucketConfig.getBuckets().size() == 0) {
+        if (bucketConfig == null || bucketConfig.getBuckets() == null || bucketConfig.getBuckets().isEmpty()) {
             log.error("class BucketConfig::Arg bucketConfig injects error");
             throw new IllegalStateException();
         }
@@ -100,7 +100,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
 //    @PostConstruct
     public void preloadImgInfoToRedis() {
         // 从数据库拉取所有数据
-        List<ImgEntity> imgEntities = imgInfoDao.getAllImgInfos();
+        List<ImgEntity> imgEntities = imgDao.getAllImg();
         imgEntities.forEach(imgEntity -> {
             // 将imgInfo对象存储到redis中，key为imgUrl，value为imgInfo对象，保存 14+-7 天
             redisTemplate.opsForValue().set(imgInfoPrefix + imgEntity.getImgUrl(), imgEntity, Duration.ofDays(MoUtils.randomDays(14)));
@@ -145,7 +145,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         vo.setBucketName(imgBucket.getBucketName());
         //拼接存储路径，路径格式 {token}/{originalName}_{imgCategory}{extension}
         StringBuilder imgStoragePath = new StringBuilder()
-                .append(vo.getToken())
+                .append(vo.getToken().getToken())
                 .append("/")
                 .append(vo.getFileName())
                 .append("_")
@@ -154,10 +154,12 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         vo.setFileStoragePath(imgStoragePath.toString());
 
         log.info("file info ::{}", vo.toString());
+
         //存储img到minIO，
         // TODO 异步处理(X)
         ObjectWriteResponse response = minioService.putObject(vo);
         log.info("Etag={}", response.etag());
+
         //获取img元数据，保存到数据库
         //TODO 异步处理(X)
         //初始化解析元数据要用到的对象
@@ -174,23 +176,19 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         log.info("元信息获取");
         //getting the list of all metadata elements
         String[] metadataNames = metadata.names();
-        for (String name : metadataNames) {
+        for (String name : metadataNames)
             log.info("{}->{}", name, metadata.get(name));
-        }
 
-        //TODO 元信息插入到数据库
-
-        //TODO 还有很多值像 userId 等都没插入进去!!!!!!!!!!!!!!!!!!!!!
         //提取元信息并封装到 MetadataEntity 对象
         MetadataEntity metadataEntity = MetadataEntity.builder().createdBy(vo.getToken().getUserId()).build().fromMetadata(metadata);
         log.info(metadataEntity.toString());
 
-        /*int flag = imgCameraInfoDao.insert(imgCameraInfo);
+        int flag = metadataDao.insert(metadataEntity);
         if (flag > 0)
-            log.info("imgCameraInfo插入成功");
+            log.info("metadataEntity 插入成功");
         else
-            log.info("imgCameraInfo插入失败");*/
-        //
+            log.info("metadataEntity 插入失败");
+        // TODO geo信息收集，可以和 metadata 双线程处理
         //插入图片信息到数据库
         ImgEntity img = ImgEntity.builder()
                 .imgUrl(StringGenerator.getURL())
@@ -208,10 +206,13 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
                 .createdBy(vo.getToken().getUserId())
                 // TODO originalCreatedTime 和 originalModifiedTime 由前端获取，等写页面时再赋值
                 .build();
-//        int imgAffected = imgInfoDao.insert(img);
+        int imgAffected = imgDao.insert(img);
         log.info(img.toString());
 
-        return R.success().setData(img.getImgUrl());
+        return R.success()
+                .put("file name", img.getOriginalFullName())
+                //拼接图片全链接;格式: {serverHost}/i/{imgURL}.{extension};例：http://localhost:8080/i/wv0o2EADJDkF4ixjyu3yxlq3jwt2qO0p.jpg
+                .put("https URL", serverHost + "/i/" + img.getImgUrl() + img.getExtension());
     }
 
     @Override
@@ -228,7 +229,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
     }
 
     @Override
-    public ResponseEntity<Object> download(DownloadVO vo) {
+    public ResponseEntity<Object> download(@NotNull DownloadVO vo) {
         //参数校验
         if (!StringGenerator.validateURL(vo.getUrl()))
             return ResponseEntity.badRequest().body(R.error(HttpStatus.BAD_REQUEST, "invalid params"));
@@ -248,7 +249,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
                     imgEntity = (ImgEntity) redisTemplate.opsForValue().get(key);
                 } else {
                     log.debug("search to db");
-                    imgEntity = imgInfoDao.selectOneByImgUrl(vo.getUrl());
+                    imgEntity = imgDao.selectOneByImgUrl(vo.getUrl());
                     //db也没数据时，存一个值为null的keys进去，失效 1 分钟，防止缓存穿透
                     if (imgEntity == null) {
                         log.debug("set a key {} with value is null", key);
