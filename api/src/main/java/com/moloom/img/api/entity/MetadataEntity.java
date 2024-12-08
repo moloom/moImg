@@ -103,6 +103,8 @@ public class MetadataEntity {
             this.setDocumentarySoftware(metadata.get("tiff:Software"));
         else if (metadata.get("Exif IFD0:Software") != null)
             this.setDocumentarySoftware(metadata.get("Exif IFD0:Software"));
+        else if (metadata.get("xmpMM:History:SoftwareAgent") != null)
+            this.setDocumentarySoftware(metadata.get("xmpMM:History:SoftwareAgent"));
         this.setArtist(metadata.get("Exif IFD0:Artist"));
         this.setTitle(metadata.get("dc:title"));
         this.setKeywords(metadata.get("Keywords"));
