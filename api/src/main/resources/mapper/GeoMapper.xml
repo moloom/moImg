@@ -4,7 +4,7 @@
 
 <mapper namespace="com.moloom.img.api.dao.GeoDao">
 
-    <insert id="insert" useGeneratedKeys="true" keyProperty="imgCameraInfoId"
+    <insert id="insert" useGeneratedKeys="true" keyProperty="geoId"
             parameterType="com.moloom.img.api.entity.GeoEntity">
         INSERT INTO geo (location,
                          altitude,
