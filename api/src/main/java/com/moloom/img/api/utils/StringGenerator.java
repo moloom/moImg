@@ -75,4 +75,20 @@ public class StringGenerator {
             return false;
         return url.matches("^[a-zA-Z0-9]{" + URL_LENGTH + "}$");
     }
+
+    /**
+     * @param s      the string to be substringed
+     * @param length the length of the substring
+     * @return a string of the appropriate length
+     * @author moloom
+     * @date 2024-12-09 19:17:56
+     * @description substring a string of the appropriate length
+     */
+    @Nullable
+    public static String subStringByLength(String s, int length) {
+        if (s == null || s.isBlank()) return null;
+        if (s.length() > length)
+            return s.substring(0, length);
+        return s;
+    }
 }
