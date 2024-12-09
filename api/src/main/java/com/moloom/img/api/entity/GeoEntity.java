@@ -27,7 +27,7 @@ public class GeoEntity {
     private String altitudeRef;     // 海拔单位
     private Float gpsSpeed;        // 速度
     private String gpsSpeedRef;     // 速度单位
-    private Long imgInfoId;
+    private Long imgId;
     private Long createdBy;
     private Timestamp createdTime;
     private Timestamp updatedTime;
@@ -60,10 +60,24 @@ public class GeoEntity {
         int degreeIndex = point.indexOf("°");
         int minuteIndex = point.indexOf("'");
         int secondIndex = point.indexOf("\"");
-        Double degree = Double.parseDouble(point.substring(0, degreeIndex));
-        Double minute = Double.parseDouble(point.substring(degreeIndex + 1, minuteIndex));
-        Double second = Double.parseDouble(point.substring(minuteIndex + 1, secondIndex));
-        Double coordinator = degree + minute / 60 + second / 60 / 60;
-        return coordinator;
+        double degree = Double.parseDouble(point.substring(0, degreeIndex));
+        double minute = Double.parseDouble(point.substring(degreeIndex + 1, minuteIndex));
+        double second = Double.parseDouble(point.substring(minuteIndex + 1, secondIndex));
+        return degree + minute / 60 + second / 60 / 60;
+    }
+
+    /**
+     * @return true if all those members are null, false otherwise
+     * @author moloom
+     * @date 2024-12-09 22:37:03
+     * @description checks whether all members of the class are null
+     */
+    public boolean isEmpty() {
+        return this.getLatitude() == null
+                && this.getLongitude() == null
+                && this.getAltitude() == null
+                && this.getAltitudeRef() == null
+                && this.getGpsSpeed() == null
+                && this.getGpsSpeedRef() == null;
     }
 }

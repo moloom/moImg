@@ -2,12 +2,10 @@ package com.moloom.img.api.service.impl;
 
 import com.moloom.img.api.config.BucketConfig;
 import com.moloom.img.api.dao.DescriptionDao;
+import com.moloom.img.api.dao.GeoDao;
 import com.moloom.img.api.dao.MetadataDao;
 import com.moloom.img.api.dao.ImgDao;
-import com.moloom.img.api.entity.DescriptionEntity;
-import com.moloom.img.api.entity.ImgEntity;
-import com.moloom.img.api.entity.MetadataEntity;
-import com.moloom.img.api.entity.ImgCategory;
+import com.moloom.img.api.entity.*;
 import com.moloom.img.api.service.ImgHandlerService;
 import com.moloom.img.api.to.Buckets;
 import com.moloom.img.api.utils.MoUtils;
@@ -32,7 +30,6 @@ import org.springframework.http.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.util.Date;
@@ -42,7 +39,7 @@ import java.util.List;
 /**
  * @author: moloom
  * @date: 2024-10-22 18:28
- * @description:
+ * @description: handles the operation of images
  */
 @Service("imgHandlerService")
 @Slf4j
@@ -60,6 +57,9 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
 
     @Resource
     private MetadataDao metadataDao;
+
+    @Resource
+    private GeoDao geoDao;
 
     @Resource
     private DescriptionDao descriptionDao;
@@ -116,11 +116,6 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
 
     @Override
     public R imghandler(UploadVo vo) {
-        /*
-         * 1.
-         *
-         */
-        // 提取元信息，和存储双线程处理
 
         //确保bucket存在
         boolean bucketExists = minioService.checkBucketExist(imgBucket.getBucketName());
@@ -205,7 +200,20 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
             log.info("metadataEntity 插入成功");
         else
             log.info("metadataEntity 插入失败");
-        // TODO geo信息收集，可以和 metadata 双线程处理
+        // geo 信息收集，可以和 metadata 双线程处理
+        GeoEntity geoEntity = GeoEntity.builder()
+                .createdBy(vo.getToken().getUserId())
+                .build()
+                .fromMetadata(metadata);
+        if (!geoEntity.isEmpty()) {
+            int geoFlag = geoDao.insert(geoEntity);
+            if (geoFlag > 0)
+                log.info("geoEntity 插入成功");
+            else
+                log.info("geoEntity 插入失败");
+        }
+
+
         //插入图片信息到数据库
         ImgEntity img = ImgEntity.builder()
                 .imgUrl(StringGenerator.getURL())
@@ -225,6 +233,10 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
                 .build();
         int imgAffected = imgDao.insert(img);
         log.info(img.toString());
+
+        // TODO 对 action 进行相应的处理
+
+        // TODO 生成缩略图；把该 img 放入待处理队列中
 
         return R.success()
                 .put("file name", img.getOriginalFullName())
