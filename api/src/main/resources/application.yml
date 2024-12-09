@@ -23,8 +23,13 @@ mybatis:
 # 设置sql语句的日志级别
 logging:
   level:
-    sql: debug
-
+    org:
+      springframework:
+        jdbc: debug
+        sql: debug
+    com:
+      zaxxer:
+        hikari: debug
 # moImg args
 moimg:
   upload:
