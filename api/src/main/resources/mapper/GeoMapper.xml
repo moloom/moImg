@@ -11,19 +11,17 @@
                          altitude_ref,
                          gps_speed,
                          gps_speed_ref,
-                         img_info_id,
-                         created_by,
-                         created_time,
-                         updated_time)
+                         img_direction,
+                         img_direction_ref,
+                         created_by)
         VALUES (ST_PointFromText(CONCAT('POINT(', #{longitude}, ' ', #{latitude}, ')')),
                 #{altitude},
                 #{altitudeRef},
                 #{gpsSpeed},
                 #{gpsSpeedRef},
-                #{imgInfoId},
-                #{createdBy},
-                #{createdTime},
-                #{updatedTime})
+                #{imgDirection},
+                #{imgDirectionRef},
+                #{createdBy})
     </insert>
 
     <update id="update" parameterType="com.moloom.img.api.entity.GeoEntity">
@@ -35,20 +33,20 @@
             <if test="altitude != null">
                 altitude = #{altitude},
             </if>
-            <if test="altitudeRef != null and altitudeRef != ''">
+            <if test="altitudeRef != null and altitudeRef.trim() != ''">
                 altitude_ref = #{altitudeRef},
             </if>
             <if test="gpsSpeed != null">
                 gps_speed = #{gpsSpeed},
             </if>
-            <if test="gpsSpeedRef != null and gpsSpeedRef != ''">
+            <if test="gpsSpeedRef != null and gpsSpeedRef.trim() != ''">
                 gps_speed_ref = #{gpsSpeedRef},
             </if>
-            <if test="imgInfoId != null">
-                img_info_id = #{imgInfoId},
+            <if test="imgDirection != null">
+                img_direction = #{imgDirection},
             </if>
-            <if test="updatedTime != null">
-                updated_time = #{updatedTime}
+            <if test="imgDirectionRef != null and imgDirectionRef.trim() != ''">
+                img_direction_ref = #{imgDirectionRef},
             </if>
         </set>
         WHERE geo_id = #{geoId}
@@ -63,7 +61,8 @@
                altitude_ref,
                gps_speed,
                gps_speed_ref,
-               img_info_id,
+               img_direction,
+               img_direction_ref,
                created_by,
                created_time,
                updated_time

@@ -27,7 +27,8 @@ public class GeoEntity {
     private String altitudeRef;     // 海拔单位
     private Float gpsSpeed;        // 速度
     private String gpsSpeedRef;     // 速度单位
-    private Long imgId;
+    private Float imgDirection;        // 图像拍摄时相机的方向
+    private String imgDirectionRef;     // 图像拍摄时相机的方向单位
     private Long createdBy;
     private Timestamp createdTime;
     private Timestamp updatedTime;
@@ -49,6 +50,9 @@ public class GeoEntity {
         if (metadata.get("GPS:GPS Speed") != null && !metadata.get("GPS:GPS Speed").isEmpty())
             this.setGpsSpeed(Float.valueOf(metadata.get("GPS:GPS Speed").substring(0, metadata.get("GPS:GPS Speed").indexOf(' '))));
         this.setGpsSpeedRef(metadata.get("GPS:GPS Speed Ref"));
+        if (metadata.get("GPS:GPS Img Direction") != null)
+            this.setImgDirection(Float.valueOf(metadata.get("GPS:GPS Img Direction").substring(0, metadata.get("GPS:GPS Img Direction").indexOf(" "))));
+        this.setImgDirectionRef(metadata.get("GPS:GPS Img Direction Ref"));
         return this;
     }
 

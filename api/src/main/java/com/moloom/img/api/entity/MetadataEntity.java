@@ -38,6 +38,7 @@ public class MetadataEntity {
     private String title;       //标题
     private String keywords;    //关键词,有多个
     private String copyright;       //版权
+    private String platform;        //照片制作平台
     private String orientation;     //旋转角度
     private Double xResolution;     //水平分辨率
     private Double yResolution;     //垂直分辨率
@@ -53,6 +54,7 @@ public class MetadataEntity {
     private Integer isoSpeedRatings;    //ISO曝光度
     private String exposureTime;    //曝光时间，快门速度
     private String exposureMode;     //曝光模式
+    private String exposureProgram;     //曝光程序
     private String exposureBiasValue;       //曝光偏差
     private Float fNumber;     //光圈系数
     private String maxApertureValue;        //最大光圈
@@ -69,6 +71,8 @@ public class MetadataEntity {
     private String LensMake;        //镜头生产厂商
     private String LensModel;       //镜头型号
     private String lensSpecification;   //镜头焦距信息
+    private String sensingMethod;       //传感器类型
+    private String sceneType;       //镜头类型
     private Timestamp dateTimeOriginal;     //拍摄时间
     private Integer subsecTimeOriginal;     //拍摄时间 微秒数
     private Timestamp dateTimeDigitized;    //数字化时间
@@ -110,7 +114,11 @@ public class MetadataEntity {
         this.setArtist(metadata.get("Exif IFD0:Artist"));
         this.setTitle(metadata.get("dc:title"));
         this.setKeywords(metadata.get("Keywords"));
-        this.setCopyright(metadata.get("Exif IFD0:Copyright"));
+        if (metadata.get("Exif IFD0:Copyright") != null)
+            this.setCopyright(metadata.get("Exif IFD0:Copyright"));
+        else if (metadata.get("ICC:Profile Copyright") != null)
+            this.setCopyright(metadata.get("ICC:Profile Copyright"));
+        this.setPlatform(metadata.get("ICC:Primary Platform"));
         this.setOrientation(metadata.get("tiff:Orientation"));
         if (metadata.get("tiff:XResolution") != null)
             this.setXResolution(Double.valueOf(metadata.get("tiff:XResolution")));
@@ -120,7 +128,11 @@ public class MetadataEntity {
         this.setYCbCrPositioning(metadata.get("Exif IFD0:YCbCr Positioning"));
         this.setComponentsConfiguration(metadata.get("Exif SubIFD:Components Configuration"));
         this.setCompressedBitsPerPixel(metadata.get("Exif SubIFD:Compressed Bits Per Pixel"));
-        this.setColorSpace(metadata.get("Exif SubIFD:Color Space"));
+        if (metadata.get("Exif SubIFD:Color Space") != null) {
+            this.setColorSpace(metadata.get("Exif SubIFD:Color Space"));
+            if (metadata.get("ICC:Color space") != null)
+                this.setColorSpace(metadata.get("ICC:Color space"));
+        }
         this.setCompression(metadata.get("Compression Type"));
 
         this.setExifVersion(metadata.get("Exif SubIFD:Exif Version"));
@@ -130,6 +142,7 @@ public class MetadataEntity {
         this.setExposureTime(metadata.get("Exif SubIFD:Exposure Time"));
         this.setExposureMode(metadata.get("Exif SubIFD:Exposure Mode"));
         this.setExposureBiasValue(metadata.get("Exif SubIFD:Exposure Bias Value"));
+        this.setExposureProgram(metadata.get("Exif SubIFD:Exposure Program"));
         if (metadata.get("exif:FNumber") != null)
             this.setFNumber(Float.valueOf(metadata.get("exif:FNumber")));
         this.setMaxApertureValue(metadata.get("Exif SubIFD:Aperture Value"));
@@ -151,6 +164,8 @@ public class MetadataEntity {
         this.setLensMake(metadata.get("Exif SubIFD:Lens Make"));
         this.setLensModel(metadata.get("Exif SubIFD:Lens Model"));
         this.setLensSpecification(metadata.get("Exif SubIFD:Lens Specification"));
+        this.setSensingMethod(metadata.get("Exif SubIFD:Sensing Method"));
+        this.setSceneType(metadata.get("Exif SubIFD:Scene Type"));
         this.setDateTimeOriginal(convertStringToTimestamp(metadata.get("Exif SubIFD:Date/Time Original")));
         if (metadata.get("Exif SubIFD:Sub-Sec Time Original") != null)
             this.setSubsecTimeOriginal(Integer.valueOf(metadata.get("Exif SubIFD:Sub-Sec Time Original")));
@@ -160,7 +175,10 @@ public class MetadataEntity {
             this.setDateTimeDigitized(convertStringToTimestamp(metadata.get("Exif IFD0:Date/Time")));
         if (metadata.get("Exif SubIFD:Sub-Sec Time Digitized") != null)
             this.setSubsecTimeDigitized(Integer.valueOf(metadata.get("Exif SubIFD:Sub-Sec Time Digitized")));
-        this.setTimeZone(metadata.get("Exif SubIFD:Time Zone"));
+        if (metadata.get("Exif SubIFD:Time Zone") != null)
+            this.setTimeZone(metadata.get("Exif SubIFD:Time Zone"));
+        else if (metadata.get("Exif SubIFD:Time Zone Digitized") != null)
+            this.setTimeZone(metadata.get("Exif SubIFD:Time Zone Digitized"));
 
         if (metadata.get("tiff:ImageWidth") != null)
             this.setWidth(Integer.valueOf(metadata.get("tiff:ImageWidth")));
