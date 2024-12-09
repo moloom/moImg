@@ -50,6 +50,7 @@
                                      subsec_time_original,
                                      date_time_digitized,
                                      subsec_time_digitized,
+                                     time_zone,
                                      created_by)
         values (#{descriptionId},
                 #{make}, #{model},
@@ -93,6 +94,7 @@
                 #{subsecTimeOriginal},
                 #{dateTimeDigitized},
                 #{subsecTimeDigitized},
+                #{timeZone},
                 #{createdBy})
     </insert>
 
@@ -228,6 +230,9 @@
             </if>
             <if test="subsecTimeDigitized != null">
                 subsec_time_digitized = #{subsecTimeDigitized},
+            </if>
+            <if test="timeZone != null and timeZone.trim() != ''">
+                time_zone = #{timeZone},
             </if>
             <if test="createdBy != null">
                 created_by = #{createdBy}

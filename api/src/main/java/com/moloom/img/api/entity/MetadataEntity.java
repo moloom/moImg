@@ -73,6 +73,7 @@ public class MetadataEntity {
     private Integer subsecTimeOriginal;     //拍摄时间 微秒数
     private Timestamp dateTimeDigitized;    //数字化时间
     private Integer subsecTimeDigitized;    //数字化时间 微秒数
+    private String timeZone;        //时区
 
     private Long createdBy;
     private Timestamp createdTime;
@@ -159,6 +160,7 @@ public class MetadataEntity {
             this.setDateTimeDigitized(convertStringToTimestamp(metadata.get("Exif IFD0:Date/Time")));
         if (metadata.get("Exif SubIFD:Sub-Sec Time Digitized") != null)
             this.setSubsecTimeDigitized(Integer.valueOf(metadata.get("Exif SubIFD:Sub-Sec Time Digitized")));
+        this.setTimeZone(metadata.get("Exif SubIFD:Time Zone"));
 
         if (metadata.get("tiff:ImageWidth") != null)
             this.setWidth(Integer.valueOf(metadata.get("tiff:ImageWidth")));
