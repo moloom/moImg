@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 @Builder
 public class MetadataEntity {
     private Long metadataId; // 主键
-    private String description;    //图片描述
+    private Long descriptionId;    //图片描述 id
     private String make;        //摄像头品牌
     private String model;       //摄像头型号
     private String software;    //固件 Firmware 版本或者编辑软件
@@ -80,6 +80,7 @@ public class MetadataEntity {
     //不入数据库
     private Integer width;     //图像宽度
     private Integer length;    //图像高度
+    private String description;    //图片描述
 
     /**
      * @param metadata 提取的图像信息对象

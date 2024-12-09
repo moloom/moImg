@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.moloom.img.api.dao.DescriptionDao">
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="descriptionId"
+            parameterType="com.moloom.img.api.entity.DescriptionEntity">
+        INSERT INTO description (description)
+        VALUES (#{description})
+    </insert>
+
+    <update id="update" parameterType="com.moloom.img.api.entity.DescriptionEntity">
+        UPDATE description
+        <set>
+            <if test="description != null and description.trim() != ''">
+                description = #{description},
+            </if>
+        </set>
+        WHERE description_id = #{descriptionId}
+    </update>
+
+</mapper>

@@ -7,7 +7,7 @@
     <!-- 插入数据 -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="metadataId"
             parameterType="com.moloom.img.api.entity.MetadataEntity">
-        insert into metadata (description,
+        insert into metadata (description_id,
                                      make,
                                      model,
                                      software,
@@ -51,7 +51,7 @@
                                      date_time_digitized,
                                      subsec_time_digitized,
                                      created_by)
-        values (#{description},
+        values (#{descriptionId},
                 #{make}, #{model},
                 #{software},
                 #{documentarySoftware},
@@ -100,8 +100,8 @@
     <update id="update" parameterType="com.moloom.img.api.entity.MetadataEntity">
         UPDATE metadata
         <set>
-            <if test="description != null and description.trim() != ''">
-                description = #{description},
+            <if test="descriptionId != null">
+                description_id = #{descriptionId},
             </if>
             <if test="make != null and make.trim() != ''">
                 make = #{make},

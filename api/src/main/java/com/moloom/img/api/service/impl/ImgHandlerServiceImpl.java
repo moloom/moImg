@@ -1,8 +1,10 @@
 package com.moloom.img.api.service.impl;
 
 import com.moloom.img.api.config.BucketConfig;
+import com.moloom.img.api.dao.DescriptionDao;
 import com.moloom.img.api.dao.MetadataDao;
 import com.moloom.img.api.dao.ImgDao;
+import com.moloom.img.api.entity.DescriptionEntity;
 import com.moloom.img.api.entity.ImgEntity;
 import com.moloom.img.api.entity.MetadataEntity;
 import com.moloom.img.api.entity.ImgCategory;
@@ -30,6 +32,7 @@ import org.springframework.http.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 import java.util.Date;
@@ -57,6 +60,9 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
 
     @Resource
     private MetadataDao metadataDao;
+
+    @Resource
+    private DescriptionDao descriptionDao;
 
     @Value("${moimg.upload.upload-root-path}")
     private String prePath;
@@ -182,7 +188,18 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         //提取元信息并封装到 MetadataEntity 对象
         MetadataEntity metadataEntity = MetadataEntity.builder().createdBy(vo.getToken().getUserId()).build().fromMetadata(metadata);
         log.info(metadataEntity.toString());
-
+        //若 description 不为空，则封装到 DescriptionEntity 对象并插入到数据库
+        if (metadataEntity.getDescription() != null && !metadataEntity.getDescription().isBlank()) {
+            DescriptionEntity description = DescriptionEntity.builder()
+                    //description 属性数据库存储的类型是 text ，长度只有 2^16=65536；只存储 description 的前 65536 个字符
+                    .description(StringGenerator.subStringByLength(metadataEntity.getDescription(), 65536))
+                    .build();
+            //把 description 插入到数据库
+            descriptionDao.insert(description);
+            //关联 metadata 和 description
+            metadataEntity.setDescriptionId(description.getDescriptionId());
+        }
+        //插入元信息到数据库
         int flag = metadataDao.insert(metadataEntity);
         if (flag > 0)
             log.info("metadataEntity 插入成功");
