@@ -228,6 +228,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
                 .width(metadataEntity.getWidth())
                 .length(metadataEntity.getLength())
                 .metadataId(metadataEntity.getMetadataId())
+                .geoId(geoEntity.getGeoId())
                 .createdBy(vo.getToken().getUserId())
                 // TODO originalCreatedTime 和 originalModifiedTime 由前端获取，等写页面时再赋值
                 .build();
