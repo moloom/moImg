@@ -1,4 +1,3 @@
-
 spring:
   datasource:
     url: jdbc:mysql://mysql:3306/moimg?autoReconnect=true&socketTimeout=10000&useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
@@ -15,9 +14,9 @@ spring:
       timeout: 1000ms         # 连接超时时间
       lettuce: #配置连接池
         pool:
-          max-active: 8       #连接池最大连接数
-          max-idle: 8         #连接池最大空闲数
-          min-idle: 0         #连接词最小空闲连接数
+          max-active: 30       #连接池最大连接数
+          max-idle: 10         #连接池最大空闲数
+          min-idle: 4         #连接词最小空闲连接数
           max-wait: -1ms      #连接池最大阻塞等待实践，负值表示没有限制
 moimg:
   host: "https://img.moloom.cn"    # 当前系统的域名，生成图片连接时会用到

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 
@@ -60,5 +61,10 @@ public class InitActions implements InitializingBean {
             ((ConfigurableApplicationContext) applicationContext).close();
         }
 
+    }
+
+    @Scheduled(fixedDelay = 5000)  // 每 5 分钟执行一次
+    public void pingRedis() {
+        redisTemplate.getConnectionFactory().getConnection().ping();
     }
 }
