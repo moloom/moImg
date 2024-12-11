@@ -1,7 +1,7 @@
 package com.moloom.img.api.controller;
 
 import com.moloom.img.api.entity.TokensEntity;
-import com.moloom.img.api.service.ImgHandlerService;
+import com.moloom.img.api.service.ImgService;
 import com.moloom.img.api.service.TokensService;
 import com.moloom.img.api.service.UploadDispatcherService;
 import com.moloom.img.api.vo.DownloadVO;
@@ -16,8 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.time.Duration;
 
 
 /**
@@ -37,7 +35,7 @@ public class UpDownLoadController {
     private UploadDispatcherService uploadDispatcherService;
 
     @Resource
-    private ImgHandlerService imgHandlerService;
+    private ImgService imgService;
 
     @Resource
     private TokensService tokensService;
@@ -72,7 +70,7 @@ public class UpDownLoadController {
             @PathVariable String url,
             @PathVariable String extension) {
 
-        return imgHandlerService.download(DownloadVO.builder()
+        return imgService.download(DownloadVO.builder()
                 .url(url)
                 .extension(extension)
                 .build());
