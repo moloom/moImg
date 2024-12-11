@@ -18,7 +18,7 @@ spring:
       port: 8809              # Redis服务器连接端口
       #    username: mo
       password: mo             # Redis服务器连接密码（默认为空）
-      timeout: 5000ms         # 连接超时时间
+      timeout: 2000ms         # 连接超时时间
       lettuce: #配置连接池
         pool:
           max-active: 30       #连接池最大连接数

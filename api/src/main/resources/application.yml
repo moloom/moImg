@@ -29,7 +29,7 @@ logging:
         sql: debug
     com:
       zaxxer:
-        hikari: debug
+        hikari: info
 # moImg args
 moimg:
   upload:

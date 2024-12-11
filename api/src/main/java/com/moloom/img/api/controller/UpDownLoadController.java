@@ -6,7 +6,6 @@ import com.moloom.img.api.service.TokensService;
 import com.moloom.img.api.service.UploadDispatcherService;
 import com.moloom.img.api.vo.DownloadVO;
 import com.moloom.img.api.to.R;
-import com.moloom.img.api.utils.StringGenerator;
 import com.moloom.img.api.vo.ImgActionsVo;
 import com.moloom.img.api.vo.UploadVo;
 import jakarta.annotation.Resource;
@@ -24,7 +23,7 @@ import java.time.Duration;
 /**
  * @author: moloom
  * @date: 2024-10-03 19:31
- * @description: receive upload file
+ * @description: received and uploaded file handler
  */
 @RestController
 @Slf4j
@@ -47,7 +46,7 @@ public class UpDownLoadController {
     @Resource
     private String tokensPrefix;
 
-    @RequestMapping(value = "/api/upload/{token}", method = RequestMethod.POST, consumes = "multipart/form-data")
+    @PostMapping(value = "/api/upload/{token}", consumes = "multipart/form-data")
     public R upload(@RequestParam("file") MultipartFile[] multipartFiles,
                     @PathVariable("token") String token, ImgActionsVo actionsVo,
                     HttpServletRequest request) {
@@ -77,7 +76,6 @@ public class UpDownLoadController {
                 .url(url)
                 .extension(extension)
                 .build());
-
     }
 
 }
