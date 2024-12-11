@@ -20,11 +20,20 @@ public class StringGenerator {
     //文件资源的访问字符串长度
     private static final int URL_LENGTH = 32;
 
+    public static int getTokenLength() {
+        return TOKEN_LENGTH;
+    }
 
+    public static int getURLLength() {
+        return URL_LENGTH;
+    }
+
+    @NotNull
     public static String getToken() {
         return generateString(TOKEN_LENGTH);
     }
 
+    @NotNull
     public static String getURL() {
         return generateString(URL_LENGTH);
     }
@@ -36,6 +45,7 @@ public class StringGenerator {
      * @date 2024-10-14 05:28:21
      * @description generate random string
      */
+    @NotNull
     public static String generateString(int length) {
         //StringBuilder 比 StringBuffer 几乎快一倍
         StringBuilder string = new StringBuilder();
