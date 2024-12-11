@@ -94,9 +94,9 @@ public class RedisConfig {
      * @date 2024-11-28 17:19:26
      * @description 注入在redis中的 imgInfo 前缀
      */
-    @Bean("imgInfoPrefix")
+    @Bean("imgPrefix")
     public String imgInfoPrefix() {
-        return "imgInfo:all:";
+        return "img:all:";
     }
 }
 
