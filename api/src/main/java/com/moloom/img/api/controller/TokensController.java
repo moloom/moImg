@@ -23,7 +23,7 @@ public class TokensController {
      * @date 2024-11-20 23:39:03
      * @description generate a token and save it to redis
      */
-    @GetMapping("/reg")
+    @PostMapping("/reg")
     public R register() {
         return tokensService.registerInRedis();
     }
