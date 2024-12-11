@@ -6,7 +6,7 @@ import com.moloom.img.api.dao.GeoDao;
 import com.moloom.img.api.dao.MetadataDao;
 import com.moloom.img.api.dao.ImgDao;
 import com.moloom.img.api.entity.*;
-import com.moloom.img.api.service.ImgHandlerService;
+import com.moloom.img.api.service.ImgService;
 import com.moloom.img.api.to.Buckets;
 import com.moloom.img.api.utils.MoUtils;
 import com.moloom.img.api.vo.DownloadVO;
@@ -43,8 +43,7 @@ import java.util.List;
  */
 @Service("imgHandlerService")
 @Slf4j
-public class ImgHandlerServiceImpl implements ImgHandlerService {
-
+public class ImgServiceImpl implements ImgService {
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
@@ -75,7 +74,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
 
     //redis中imgInfo的key前缀
     @Resource
-    private String imgInfoPrefix;
+    private String imgPrefix;
 
     @Resource
     private String serverHost;
@@ -104,12 +103,12 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
      * @description preload ImgEntity to redis
      */
 //    @PostConstruct
-    public void preloadImgInfoToRedis() {
+    public void preloadImgToRedis() {
         // 从数据库拉取所有数据
         List<ImgEntity> imgEntities = imgDao.getAllImg();
         imgEntities.forEach(imgEntity -> {
-            // 将imgInfo对象存储到redis中，key为imgUrl，value为imgInfo对象，保存 14+-7 天
-            redisTemplate.opsForValue().set(imgInfoPrefix + imgEntity.getImgUrl(), imgEntity, Duration.ofDays(MoUtils.randomDays(14)));
+            // 将img对象存储到redis中，key为imgUrl，value为img对象，保存 14+-7 天
+            redisTemplate.opsForValue().set(imgPrefix + imgEntity.getImgUrl(), imgEntity, Duration.ofDays(MoUtils.randomDays(14)));
         });
     }
 
@@ -264,7 +263,7 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
         if (!StringGenerator.validateURL(vo.getUrl()))
             return ResponseEntity.badRequest().body(R.error(HttpStatus.BAD_REQUEST, "invalid params"));
 
-        String key = imgInfoPrefix + vo.getUrl();
+        String key = imgPrefix + vo.getUrl();
         //get ImgEntity obj
         //TODO 考虑用redis锁
         ImgEntity imgEntity;
@@ -317,5 +316,35 @@ public class ImgHandlerServiceImpl implements ImgHandlerService {
                 .contentLength(imgEntity.getSize())
                 .contentType(MediaType.parseMediaType(imgEntity.getContentType()))
                 .body(inputStream);
+    }
+
+    @Override
+    public R deleteImgByUrl(String url) {
+        return null;
+    }
+
+    @Override
+    public R deleteImgById(Long id) {
+        return null;
+    }
+
+    @Override
+    public boolean checkAndCacheImg(String url) {
+        /*if (url == null || !StringGenerator.validateToken(token))
+            return false;
+        //TODO 需要优化，在多线程下，可能存在并发问题
+        TokensEntity tokensEntity;
+        //查看 redis 中是否有 token
+        tokensEntity = (TokensEntity) redisTemplate.opsForValue().get(tokensPrefix + token);
+        if (tokensEntity == null)
+            //若 redis 里不存在，则查 DB
+            tokensEntity = tokensDao.selectOneByToken(token);
+        //若已过期，或不存在，则返回 false
+        if (tokensEntity == null || tokensEntity.getStatus() == 0)
+            return false;
+        //若存在，则更新 cache 过期时间为 status*8 天
+        redisTemplate.opsForValue().set(tokensPrefix + token, tokensEntity, Duration.ofDays(tokensEntity.getStatus() << 3));
+        //token 正常，返回true*/
+        return true;
     }
 }
