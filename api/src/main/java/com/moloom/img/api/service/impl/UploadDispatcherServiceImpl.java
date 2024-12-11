@@ -1,6 +1,5 @@
 package com.moloom.img.api.service.impl;
 
-import com.moloom.img.api.dao.TokensDao;
 import com.moloom.img.api.exception.BadRequestException;
 import com.moloom.img.api.exception.ExtensionMismatchException;
 import com.moloom.img.api.service.*;
@@ -10,7 +9,6 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -34,7 +32,7 @@ public class UploadDispatcherServiceImpl implements UploadDispatcherService {
 
 
     @Resource
-    private ImgHandlerService imgHandlerService;
+    private ImgService imgService;
     @Resource
     private VideoHandlerService videoHandlerService;
 
@@ -78,7 +76,7 @@ public class UploadDispatcherServiceImpl implements UploadDispatcherService {
 
             //匹配文件类型对应的处理方法
             if (uploadVo.getContentType().startsWith("image/"))
-                handledResult.add(imgHandlerService.imghandler(uploadVo));
+                handledResult.add(imgService.imghandler(uploadVo));
             else if (uploadVo.getContentType().startsWith("video/"))
                 handledResult.add(videoHandlerService.videoHandler(uploadVo));
             else if (uploadVo.getContentType().equals("application/octet-stream"))
