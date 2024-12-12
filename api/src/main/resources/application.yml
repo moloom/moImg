@@ -2,8 +2,8 @@ server:
   port: 8803
   tomcat:
     threads:
-      max: 200  # 最大线程数
-      min-spare: 50   # 最小线程数
+      max: 50  # 最大线程数
+      min-spare: 20   # 最小线程数
 
 spring:
   application:
