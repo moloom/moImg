@@ -5,9 +5,11 @@ import com.moloom.img.api.to.Buckets;
 import com.moloom.img.api.vo.DownloadVO;
 import com.moloom.img.api.vo.UploadVo;
 import io.minio.ObjectWriteResponse;
+import io.minio.messages.DeleteObject;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author: moloom
@@ -60,4 +62,22 @@ public interface MinioService {
      * @description Gets data of an object.
      */
     public InputStream getObject(DownloadVO vo);
+
+    /**
+     * @param bucketName
+     * @param objectName
+     * @author moloom
+     * @date 2024-12-12 21:06:12
+     * @description Removes an object
+     */
+    public boolean removeObject(String bucketName, String objectName);
+
+    /**
+     * @param bucketName
+     * @param objects the objects to be removed
+     * @author moloom
+     * @date 2024-12-12 21:10:07
+     * @description Removes multiple objects
+     */
+    public boolean removeObjects(String bucketName, List<DeleteObject> objects);
 }

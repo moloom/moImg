@@ -5,12 +5,16 @@ import com.moloom.img.api.to.Buckets;
 import com.moloom.img.api.vo.DownloadVO;
 import com.moloom.img.api.vo.UploadVo;
 import io.minio.*;
+import io.minio.messages.DeleteError;
+import io.minio.messages.DeleteObject;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author: moloom
@@ -105,5 +109,40 @@ public class MinioServiceImpl implements MinioService {
             log.error("getObject()::get object from minIO error");
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public boolean removeObject(String bucketName, String objectName) {
+        try {
+
+            minioClient.removeObject(
+                    RemoveObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .build());
+        } catch (Exception e) {
+            log.error("removeObject()::remove object from minIO error");
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean removeObjects(String bucketName, List<DeleteObject> objects) {
+        try {
+            Iterable<Result<DeleteError>> results =
+                    minioClient.removeObjects(
+                            RemoveObjectsArgs.builder()
+                                    .bucket(bucketName)
+                                    .objects(objects)
+                                    .build());
+            for (Result<DeleteError> result : results) {
+                DeleteError error = result.get();
+                log.error("Error in deleting object {}; {}", error.objectName(), error.message());
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 }
