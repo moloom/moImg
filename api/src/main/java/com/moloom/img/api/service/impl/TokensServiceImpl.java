@@ -105,10 +105,8 @@ public class TokensServiceImpl implements TokensService {
     public boolean checkAndCacheToken(String token) {
         if (token == null || !StringGenerator.validateToken(token))
             return false;
-        //TODO 需要优化，在多线程下，可能存在并发问题
-        TokensEntity tokensEntity;
         //查看 redis 中是否有 token
-        tokensEntity = (TokensEntity) redisTemplate.opsForValue().get(tokensPrefix + token);
+        TokensEntity tokensEntity = (TokensEntity) redisTemplate.opsForValue().get(tokensPrefix + token);
         if (tokensEntity == null)
             //若 redis 里不存在，则查 DB
             tokensEntity = tokensDao.selectOneByToken(token);
