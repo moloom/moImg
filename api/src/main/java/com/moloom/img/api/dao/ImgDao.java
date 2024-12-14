@@ -26,7 +26,7 @@ public interface ImgDao {
 
     /**
      * @param imgEntity 值不为空的才会修改进数据库
-     * @return affect row count;0 error or >0 success
+     * @return the number of rows affected
      * @author moloom
      * @date 2024-11-01 00:54:42
      * @description update data,only update not null and not empty fields!
@@ -36,13 +36,23 @@ public interface ImgDao {
 
     /**
      * @param imgId
-     * @return 0 error or >0 success
+     * @return the number of rows affected
      * @author moloom
      * @date 2024-11-01 01:12:30
      * @description delete a record by img_id
      */
     @Delete("DELETE FROM img WHERE img_id = #{imgId}")
     int deleteById(Long imgId);
+
+    /**
+     * @param imgUrl
+     * @return the number of rows affected
+     * @author moloom
+     * @date 2024-12-12 20:31:52
+     * @description delete a record by img_url
+     */
+    @Delete("DELETE FROM img WHERE img_url = #{imgUrl}")
+    int deleteByUrl(String imgUrl);
 
     /**
      * @param

@@ -3,10 +3,13 @@ package com.moloom.img.api.controller;
 import com.moloom.img.api.service.ImgService;
 import com.moloom.img.api.service.TokensService;
 import com.moloom.img.api.to.R;
+import com.moloom.img.api.utils.StringGenerator;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
 
 /**
  * @author: moloom
@@ -56,21 +59,17 @@ public class ImgController {
         // 校验 token
         if (!tokensService.checkAndCacheToken(token))
             return R.error("token is illegal");
-        if (url == null || url.isBlank() || !imgService.checkAndCacheImg(url))
+        // 先简单地判断下参数是否合法
+        if (url == null || url.isBlank() || url.length() < StringGenerator.getURLLength())
             return R.error("URL of images is not valid");
 
-        //校验 url,判断url中是否包含扩展名
-
-        //看是否有扩展名
-        /*if (url.contains(".")) {
-            //有扩展名则去掉拓展名
-            String[] split = url.split("\\.");
-            return imgService.deleteImgByUrl(url);
-        } else if ()
-            //没有扩展名
-            return R.error("URL of images is not valid");*/
-
+        // 看是否有扩展名，有则去掉
+        if (url.contains("."))
+            url = url.split("\\.")[0];
+        // validate the URL
+        if (!imgService.checkAndCacheImg(url))
+            return R.error("URL of images is illegal");
         System.out.println("url=" + url + "\tcookie=" + token);
-        return R.success("by url");
+        return imgService.deleteImgByUrl(url);
     }
 }

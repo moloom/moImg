@@ -320,7 +320,24 @@ public class ImgServiceImpl implements ImgService {
 
     @Override
     public R deleteImgByUrl(String url) {
-        return null;
+        //obtain imgEntity obj
+        ImgEntity img = (ImgEntity) redisTemplate.opsForValue().get(imgPrefix + url);
+        if (img != null) {
+
+            //delete the img in minio
+            minioService.removeObject(imgBucket.getBucketName(),img.getStoragePath());
+            //delete the metadata of the img
+            //delete the description of the img
+
+            //TODO delete tags of the img
+            //change the token status of the img
+            //delete the cache in redis
+            redisTemplate.delete(imgPrefix + url);
+            int affected = imgDao.deleteByUrl(url);
+            if (affected > 0)
+                return R.success("by url");
+        }
+        return R.error("the delete operation failed");
     }
 
     @Override
@@ -330,21 +347,18 @@ public class ImgServiceImpl implements ImgService {
 
     @Override
     public boolean checkAndCacheImg(String url) {
-        /*if (url == null || !StringGenerator.validateToken(token))
+        if (!StringGenerator.validateURL(url))
             return false;
-        //TODO 需要优化，在多线程下，可能存在并发问题
-        TokensEntity tokensEntity;
-        //查看 redis 中是否有 token
-        tokensEntity = (TokensEntity) redisTemplate.opsForValue().get(tokensPrefix + token);
-        if (tokensEntity == null)
-            //若 redis 里不存在，则查 DB
-            tokensEntity = tokensDao.selectOneByToken(token);
-        //若已过期，或不存在，则返回 false
-        if (tokensEntity == null || tokensEntity.getStatus() == 0)
+        // 先查 redis 中是否存在
+        ImgEntity imgEntity = (ImgEntity) redisTemplate.opsForValue().get(imgPrefix + url);
+        // if not exists in redis, search to db
+        if (imgEntity == null) {
+            imgEntity = imgDao.selectOneByImgUrl(url);
+        }
+        if (imgEntity == null)
             return false;
-        //若存在，则更新 cache 过期时间为 status*8 天
-        redisTemplate.opsForValue().set(tokensPrefix + token, tokensEntity, Duration.ofDays(tokensEntity.getStatus() << 3));
-        //token 正常，返回true*/
+        // cache imgEntity to redis with an expiration time of approximately 15 days
+        redisTemplate.opsForValue().set(imgPrefix + url, imgEntity, Duration.ofDays(MoUtils.randomDays(15)));
         return true;
     }
 }

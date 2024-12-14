@@ -19,7 +19,7 @@ public interface ImgService {
      * @return
      * @author moloom
      * @date 2024-10-22 20:19:06
-     * @description 处理上传图片
+     * @description handle upload file
      */
     public R imghandler(UploadVo vo);
 
@@ -37,7 +37,7 @@ public interface ImgService {
      * @return
      * @author moloom
      * @date 2024-11-04 00:34:04
-     * @description 从服务器返回文件
+     * @description return a file from the server
      */
     public ResponseEntity<Object> download(DownloadVO vo);
 
