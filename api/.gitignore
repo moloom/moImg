@@ -21,6 +21,8 @@ run.sh
 *.iml
 *.ipr
 
+**/.DS_Store
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
