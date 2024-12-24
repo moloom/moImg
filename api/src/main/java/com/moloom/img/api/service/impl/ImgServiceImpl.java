@@ -117,9 +117,9 @@ public class ImgServiceImpl implements ImgService {
     public R imghandler(UploadVo vo) {
 
         //确保bucket存在
-        boolean bucketExists = minioService.checkBucketExist(imgBucket.getBucketName());
+        boolean bucketExists = minioService.bucketExists(imgBucket.getBucketName());
         if (!bucketExists)
-            minioService.makeBucket(imgBucket);
+            minioService.makeBucketMo(imgBucket);
 
         //获取文件后缀名
         if (vo.getFileExtension() == null || vo.getFileExtension().isEmpty()) {
