@@ -1,30 +1,21 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import Upload from './components/Upload.vue'
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="app-container">
+    <Upload/>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+.app-container {
+  width: 100%;
+  margin: 0 auto;
+  background-color: white;
+  min-width: 1200px;  /*防止过小屏幕时内容溢出 */
+  max-width: 2200px; /* 最大宽度，避免过大屏幕时内容过宽 */
+  display: flex;
+  justify-content: center;
 }
 </style>
