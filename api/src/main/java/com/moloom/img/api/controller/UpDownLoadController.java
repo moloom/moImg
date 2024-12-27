@@ -49,6 +49,7 @@ public class UpDownLoadController {
                     @PathVariable("token") String token, ImgActionsVo actionsVo,
                     HttpServletRequest request) {
 
+        //TODO 先验证路径中的 token ，若不存在则从cookie中获取
         //check token is valid and registered.
         //if the token is already in Redis, its expiration time will be extended. Otherwise, an error will be returned.
         if (!tokensService.checkAndCacheToken(token))
