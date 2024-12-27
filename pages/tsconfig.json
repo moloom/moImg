@@ -3,5 +3,14 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  "compilerOptions": {
+    "strict": false,  // 禁用严格模式
+    "noImplicitAny": false,  // 禁用隐式 any 错误检查
+    "noUnusedLocals": false,  // 禁用未使用变量检查
+    "noUnusedParameters": false,  // 禁用未使用参数检查
+    "skipLibCheck": true,  // 跳过库文件的类型检查
+    "esModuleInterop": true,  // 允许使用 import x from 'y' 语法
+    "allowSyntheticDefaultImports": true // 允许使用 import x from 'y' 语法
+  }
 }

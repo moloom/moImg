@@ -30,7 +30,6 @@ const uploadFiles = async (files: FileList) => {
   Array.from(files).forEach(file => {
     formData.append('file', file);
   });
-
   try {
     const response = await axios.post('/upload/' + Cookies.get("token"), formData, {
       headers: {
@@ -53,7 +52,7 @@ const uploadFiles = async (files: FileList) => {
               httpsURL: result.https_URL
             });
           })
-        }, 700);
+        }, 500);
       } else {
         resultList.forEach((result: { status: string, msg: string, file_name: string, https_URL: string }) => {
           uploadResults.value.push({
@@ -65,9 +64,13 @@ const uploadFiles = async (files: FileList) => {
         })
       }
     }
-  } catch (error) {
-    console.error('上传失败', error);
-    alert('上传失败');
+  } catch (error: any) {
+    console.log(error)
+    if (error.response?.data) {
+      const errResponse = error.response.data as ErrorResponseType;
+      console.error('上传失败:', errResponse);
+      alert(errResponse.msg);
+    }
   }
 };
 // 模拟文件上传，假设返回结果
