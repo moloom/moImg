@@ -239,9 +239,9 @@ public class ImgServiceImpl implements ImgService {
         // TODO 生成缩略图；把该 img 放入待处理队列中
 
         return R.success()
-                .put("file name", img.getOriginalFullName())
+                .put("file_name", img.getOriginalFullName())
                 //拼接图片全链接;格式: {serverHost}/i/{imgURL}.{extension};例：http://localhost:8080/i/wv0o2EADJDkF4ixjyu3yxlq3jwt2qO0p.jpg
-                .put("https URL", serverHost + "/i/" + img.getImgUrl() + img.getExtension());
+                .put("https_URL", serverHost + "/i/" + img.getImgUrl() + img.getExtension());
     }
 
     @Override
