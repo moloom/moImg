@@ -15,9 +15,11 @@ public class CORSConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")  // 允许 /api 路径进行跨域
-                .allowedOrigins("http://localhost:5173",
+                .allowedOrigins("https://moloom.com",
+                        "https://moloom.cn",
                         "https://img.moloom.cn",
-                        "https://img.moloom.com")        // 允许的请求来源
+                        "https://img.moloom.com",
+                        "http://localhost:5173")        // 允许的请求来源
                 .allowedMethods("GET", "POST", "PUT", "DELETE")  // 允许的请求方式
                 .allowedHeaders("*")         // 允许的请求头
                 .allowCredentials(true);        // 是否允许携带凭证（如 cookies）
