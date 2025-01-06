@@ -45,7 +45,7 @@ public class UpDownLoadController {
     private String tokensPrefix;
 
     @PostMapping(value = "/api/upload/{token}", consumes = "multipart/form-data")
-    public R upload(@RequestParam("file") MultipartFile[] multipartFiles,
+    public R upload(@RequestParam("files") MultipartFile[] multipartFiles,
                     @PathVariable("token") String token, ImgActionsVo actionsVo,
                     HttpServletRequest request) {
 

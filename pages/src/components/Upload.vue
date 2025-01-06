@@ -28,7 +28,7 @@ const handleFileSelect = () => {
 const uploadFiles = async (files: FileList) => {
   const formData = new FormData();
   Array.from(files).forEach(file => {
-    formData.append('file', file);
+    formData.append('files', file);
   });
   try {
     const response = await axios.post('/upload/' + Cookies.get("token"), formData, {
@@ -227,15 +227,27 @@ a:hover {
 }
 
 @media (prefers-color-scheme: dark) {
+  /* 统一设置夜间模式下的字体颜色 */
+  *, a {
+    color: #c8c6c6;
+  }
   /* 夜间模式下的其他元素样式 */
   .upload-box {
     background-color: rgb(13, 17, 23);
     border: 2px dashed #9b59b6; /* 紫色边框 */
-    color: #c8c6c6;
   }
 
   .upload-box:hover {
     background-color: rgba(26, 36, 48, 0.8);
   }
+
+  th, td {
+    border-bottom: 1px solid #434343;
+  }
+
+  th {
+    background-color: rgb(21, 27, 35);
+  }
+
 }
 </style>
